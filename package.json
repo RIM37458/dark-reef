@@ -1,0 +1,19 @@
+{
+  "name": "dota-friend-watcher",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "node --test",
+    "check": "node scripts/check.js"
+  },
+  "dependencies": {
+    "dotakit": "0.4.0",
+    "steam-user": "5.3.0"
+  }
+}
