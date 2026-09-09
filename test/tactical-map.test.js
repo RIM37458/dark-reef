@@ -10,12 +10,12 @@ test("worldToMapPosition projects Dota world coordinates onto the minimap", () =
   assert.equal(worldToMapPosition(Number.NaN, 0), undefined);
 });
 
-test("presentTacticalMap identifies the watched hero and living structures", () => {
+test("presentTacticalMap exposes minimap hero ids and living structures", () => {
   assert.deepEqual(presentTacticalMap({
     target: { accountId: 7 },
     players: [
-      { accountId: 7, team: 2, heroName: "Slark", heroImageUrl: "slark.png", x: -2048, y: -4096 },
-      { accountId: 8, team: 3, heroName: "Slardar", heroImageUrl: "slardar.png", x: 4096, y: 2048, respawnTime: 13 },
+      { accountId: 7, team: 2, heroId: 93, heroName: "Slark", heroImageUrl: "slark.png", x: -2048, y: -4096 },
+      { accountId: 8, team: 3, heroId: 28, heroName: "Slardar", heroImageUrl: "slardar.png", x: 4096, y: 2048, respawnTime: 13 },
       { accountId: 9, team: 3, heroName: "Hidden" },
     ],
     buildings: [
@@ -29,20 +29,18 @@ test("presentTacticalMap identifies the watched hero and living structures", () 
         key: "7",
         team: 2,
         name: "Slark",
-        imageUrl: "slark.png",
+        heroId: 93,
         left: 37.5,
         top: 75,
-        target: true,
         dead: false,
       },
       {
         key: "8",
         team: 3,
         name: "Slardar",
-        imageUrl: "slardar.png",
+        heroId: 28,
         left: 75,
         top: 37.5,
-        target: false,
         dead: true,
       },
     ],

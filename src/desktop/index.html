@@ -10,6 +10,7 @@
     <title>暗黑之礁 · 监控室</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./tactical-map.css" />
+    <link rel="stylesheet" href="../../assets/dota-minimap-heroes.css" />
   </head>
   <body>
     <main class="shell">
@@ -147,32 +148,6 @@
               <span id="map-signal">坐标未公开 · 战争迷雾封锁</span>
             </div>
             <div id="battlefield-map" class="battlefield-map" role="img" aria-label="战术小地图，Valve 尚未公开英雄坐标">
-              <svg class="map-terrain" viewBox="0 0 1000 1000" aria-hidden="true">
-                <defs>
-                  <linearGradient id="map-ground" x1="0" y1="1" x2="1" y2="0">
-                    <stop offset="0" stop-color="#183326" />
-                    <stop offset="0.48" stop-color="#293527" />
-                    <stop offset="0.52" stop-color="#302d2a" />
-                    <stop offset="1" stop-color="#3a211f" />
-                  </linearGradient>
-                  <filter id="map-noise">
-                    <feTurbulence baseFrequency="0.04" numOctaves="3" seed="17" type="fractalNoise" />
-                    <feBlend in="SourceGraphic" mode="soft-light" />
-                  </filter>
-                </defs>
-                <rect width="1000" height="1000" fill="url(#map-ground)" />
-                <path class="terrain-radiant" d="M0 320L160 250 330 350 420 520 610 650 690 1000H0Z" />
-                <path class="terrain-dire" d="M310 0H1000V680L840 750 670 650 580 480 390 350Z" />
-                <path class="map-river" d="M-80 210C190 290 320 360 470 500S760 710 1080 790" />
-                <path class="map-lane" d="M90 900L105 175Q110 100 190 95L905 90" />
-                <path class="map-lane" d="M95 910L825 900Q900 895 905 810L910 90" />
-                <path class="map-lane middle" d="M105 895L895 105" />
-                <path class="map-tree-line" d="M40 420L250 400 350 520 490 600M510 400L650 480 760 590 950 570" />
-                <circle class="ancient radiant" cx="92" cy="908" r="35" />
-                <circle class="ancient dire" cx="908" cy="92" r="35" />
-                <path class="roshan-pit" d="M430 620l55-28 48 38-22 60-65 4z" />
-                <rect width="1000" height="1000" fill="transparent" filter="url(#map-noise)" opacity=".42" />
-              </svg>
               <div id="map-buildings" class="map-layer map-buildings" aria-hidden="true"></div>
               <div id="map-heroes" class="map-layer map-heroes"></div>
               <div id="map-fog" class="map-fog">
@@ -186,7 +161,6 @@
             <div class="map-legend" aria-hidden="true">
               <span><i class="radiant-dot"></i>天辉</span>
               <span><i class="dire-dot"></i>夜魇</span>
-              <span><i class="target-dot"></i>监控目标</span>
               <span>坐标为 Valve 延迟快照</span>
             </div>
           </section>

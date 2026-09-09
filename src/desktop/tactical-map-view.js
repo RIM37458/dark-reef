@@ -11,29 +11,22 @@ const buildingMarkers = new Map();
 function createHeroMarker() {
   const marker = document.createElement("div");
   marker.className = "map-hero";
-  const portrait = document.createElement("img");
-  portrait.alt = "";
-  portrait.referrerPolicy = "no-referrer";
+  const icon = document.createElement("i");
+  icon.setAttribute("aria-hidden", "true");
   const deathMark = document.createElement("span");
   deathMark.className = "map-death-mark";
   deathMark.textContent = "×";
-  const haze = document.createElement("span");
-  haze.className = "map-haze-mark";
-  const hazeIcon = document.createElement("img");
-  hazeIcon.src = "../../assets/corrosive-haze.png";
-  hazeIcon.alt = "";
-  haze.append(hazeIcon);
-  marker.append(portrait, deathMark, haze);
+  marker.append(icon, deathMark);
   return marker;
 }
 
 function updateHeroMarker(marker, hero) {
-  marker.className = `map-hero team-${hero.team}${hero.target ? " target" : ""}${hero.dead ? " dead" : ""}`;
+  marker.className = `map-hero team-${hero.team}${hero.dead ? " dead" : ""}`;
   marker.style.left = `${hero.left}%`;
   marker.style.top = `${hero.top}%`;
-  marker.setAttribute("aria-label", `${hero.name}，${hero.team === 2 ? "天辉" : "夜魇"}${hero.target ? "，监控目标" : ""}${hero.dead ? "，阵亡" : ""}`);
+  marker.setAttribute("aria-label", `${hero.name}，${hero.team === 2 ? "天辉" : "夜魇"}${hero.dead ? "，阵亡" : ""}`);
   marker.title = hero.name;
-  marker.querySelector(":scope > img").src = hero.imageUrl;
+  marker.querySelector(":scope > i").className = `d2mh hero-${hero.heroId}`;
 }
 
 function syncHeroes(heroes) {

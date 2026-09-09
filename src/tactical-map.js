@@ -13,16 +13,15 @@ export function worldToMapPosition(x, y) {
   });
 }
 
-function heroMarker(player, targetAccountId, index) {
+function heroMarker(player, index) {
   const position = worldToMapPosition(player.x, player.y);
-  if (!position || !player.heroImageUrl) return null;
+  if (!position || !Number.isInteger(player.heroId)) return null;
   return Object.freeze({
     key: String(player.accountId ?? `${player.team}:${index}`),
     team: player.team,
     name: player.heroName ?? `英雄 #${player.heroId ?? "?"}`,
-    imageUrl: player.heroImageUrl,
+    heroId: player.heroId,
     ...position,
-    target: player.accountId === targetAccountId,
     dead: Number.isInteger(player.respawnTime) && player.respawnTime > 0,
   });
 }
@@ -40,9 +39,8 @@ function buildingMarker(building) {
 }
 
 export function presentTacticalMap(match) {
-  const targetAccountId = match?.target?.accountId;
   const heroes = (match?.players ?? []).map((player, index) => (
-    heroMarker(player, targetAccountId, index)
+    heroMarker(player, index)
   )).filter(Boolean);
   const buildings = (match?.buildings ?? []).map(buildingMarker).filter(Boolean);
   return Object.freeze({

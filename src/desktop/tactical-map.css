@@ -33,12 +33,11 @@
   margin: 0.75rem auto 0;
   overflow: hidden;
   border: 2px solid #243b38;
-  background: #050a09;
+  background: #050a09 url("../../assets/dota-map-detailed-740.jpg") center / cover no-repeat;
   box-shadow: inset 0 0 0 1px #557066, inset 0 0 2.5rem #000, 0 0 1.5rem rgba(2, 15, 15, 0.7);
   isolation: isolate;
 }
 
-.map-terrain,
 .map-layer,
 .map-fog {
   position: absolute;
@@ -46,18 +45,6 @@
   width: 100%;
   height: 100%;
 }
-
-.map-terrain { filter: saturate(0.75) contrast(1.12); }
-.terrain-radiant { fill: #234b30; opacity: 0.72; }
-.terrain-dire { fill: #512824; opacity: 0.62; }
-.map-river { fill: none; stroke: #1a6575; stroke-width: 88; opacity: 0.72; }
-.map-lane { fill: none; stroke: #9a8b68; stroke-width: 30; opacity: 0.58; }
-.map-lane.middle { stroke-width: 25; }
-.map-tree-line { fill: none; stroke: #0b2117; stroke-dasharray: 12 14; stroke-linecap: round; stroke-width: 42; opacity: 0.8; }
-.ancient { stroke-width: 14; }
-.ancient.radiant { fill: #163923; stroke: #72b890; }
-.ancient.dire { fill: #3c171a; stroke: #cf6d67; }
-.roshan-pit { fill: #161719; stroke: #77674f; stroke-width: 14; }
 
 .map-layer { pointer-events: none; }
 
@@ -76,19 +63,18 @@
 .map-hero {
   position: absolute;
   z-index: 3;
-  width: 2.15rem;
-  height: 2.15rem;
-  border: 0.16rem solid #85d3a7;
-  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 0.12rem solid #68d391;
   background: #08100d;
-  box-shadow: 0 0 0 0.1rem #07100d, 0 0 0.6rem #000;
+  box-shadow: 0 0 0 0.08rem #07100d, 0 0 0.45rem #000;
   transform: translate(-50%, -50%);
   transition: left 17s linear, top 17s linear, filter 250ms ease, opacity 250ms ease;
 }
 
 .fast-travel .map-hero { transition-duration: 1.55s, 1.55s, 250ms, 250ms; }
 .map-hero.team-3 { border-color: #e77370; }
-.map-hero > img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.map-hero > .d2mh { display: block; transform: scale(0.94); transform-origin: top left; }
 .map-hero.dead { opacity: 0.44; filter: grayscale(1); }
 
 .map-death-mark {
@@ -103,53 +89,6 @@
 }
 
 .map-hero.dead .map-death-mark { display: grid; }
-.map-hero.target {
-  z-index: 6;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-color: #d9e9df;
-  box-shadow: 0 0 0 0.12rem #4fa6af, 0 0 1.1rem #3ca8b8, 0 0 2rem rgba(70, 176, 190, 0.48);
-}
-
-.map-hero.target::before,
-.map-hero.target::after {
-  position: absolute;
-  inset: -0.8rem;
-  border: 0.12rem solid rgba(105, 205, 218, 0.7);
-  border-radius: 50%;
-  content: "";
-  animation: map-water-ring 2s ease-out infinite;
-}
-
-.map-hero.target::after { animation-delay: 1s; }
-
-.map-haze-mark {
-  position: absolute;
-  top: -2.2rem;
-  left: 50%;
-  display: none;
-  width: 2.2rem;
-  height: 2.2rem;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 0 0.45rem #5fb4c4);
-}
-
-.map-haze-mark::before,
-.map-haze-mark::after {
-  position: absolute;
-  top: 82%;
-  width: 0.28rem;
-  height: 0.6rem;
-  border-radius: 50% 50% 60% 60%;
-  background: #7bc1c9;
-  content: "";
-  animation: water-drip 1.5s ease-in infinite;
-}
-
-.map-haze-mark::before { left: 28%; }
-.map-haze-mark::after { right: 24%; animation-delay: 0.68s; }
-.map-haze-mark img { width: 100%; height: 100%; }
-.map-hero.target .map-haze-mark { display: block; }
 
 .map-fog {
   z-index: 10;
@@ -184,7 +123,6 @@
 .map-legend span { display: inline-flex; align-items: center; gap: 0.25rem; }
 .map-legend i { width: 0.48rem; height: 0.48rem; border-radius: 50%; background: #85d3a7; }
 .map-legend .dire-dot { background: #e77370; }
-.map-legend .target-dot { border: 1px solid #9be4e7; background: #3ca8b8; box-shadow: 0 0 0.3rem #3ca8b8; }
 
 .prisoner-cell.released .cell-bar { opacity: 0; transform: translateY(-1.4rem); }
 .prisoner-cell .cell-bar { transition: opacity 450ms ease, transform 650ms ease; }
@@ -210,11 +148,6 @@
 
 .haze-mark::before { left: 28%; }
 
-@keyframes map-water-ring {
-  from { opacity: 0.85; transform: scale(0.45); }
-  to { opacity: 0; transform: scale(1.35); }
-}
-
 @keyframes water-drip {
   0% { opacity: 0; transform: translateY(-0.2rem) scale(0.6); }
   25% { opacity: 0.85; }
@@ -226,14 +159,9 @@
   .tactical-map-heading > span { text-align: left; }
   .map-legend { flex-wrap: wrap; justify-content: flex-start; }
   .map-hero { width: 1.8rem; height: 1.8rem; }
-  .map-hero.target { width: 2.3rem; height: 2.3rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .map-hero { transition: none; }
-  .map-hero.target::before,
-  .map-hero.target::after,
-  .map-haze-mark::before,
-  .map-haze-mark::after,
   .haze-mark::before { animation: none; }
 }
