@@ -13,6 +13,10 @@ function integer(value, min, max) {
   return Number.isInteger(value) && value >= min && value <= max ? value : undefined;
 }
 
+function finiteNumber(value, min, max) {
+  return Number.isFinite(value) && value >= min && value <= max ? value : undefined;
+}
+
 function identifier(value) {
   const text = String(value ?? "");
   return MATCH_ID.test(text) ? text : undefined;
@@ -58,7 +62,7 @@ function publicItem(raw) {
   });
 }
 
-function publicPlayer(player) {
+function publicPlayer(player, fallbackTeam) {
   const heroId = integer(read(player, "heroId", "heroid"), 1, 1000);
   const hero = heroId ? heroes[String(heroId)] : undefined;
   const rawItems = Array.isArray(player?.items) ? player.items : [];
@@ -78,7 +82,24 @@ function publicPlayer(player) {
       0,
       100_000_000,
     ),
+    team: integer(read(player, "team", "team_number") ?? fallbackTeam, 2, 3),
+    x: finiteNumber(player?.x, -32_768, 32_768),
+    y: finiteNumber(player?.y, -32_768, 32_768),
+    respawnTime: integer(read(player, "respawnTime", "respawn_time"), 0, 3600),
     items: Object.freeze(rawItems.map(publicItem).filter(Boolean).slice(-9)),
+  });
+}
+
+function publicBuilding(building) {
+  if (!building || typeof building !== "object") return null;
+  return compact({
+    team: integer(read(building, "team", "team_number"), 2, 3),
+    type: integer(building.type, 0, 32),
+    lane: integer(building.lane, 0, 8),
+    tier: integer(building.tier, 0, 8),
+    x: finiteNumber(building.x, -32_768, 32_768),
+    y: finiteNumber(building.y, -32_768, 32_768),
+    destroyed: typeof building.destroyed === "boolean" ? building.destroyed : undefined,
   });
 }
 
@@ -96,11 +117,16 @@ export function toPublicMatch(game, friendSteamId64) {
   const dire = teams.find((team) => teamNumber(team) === 3) ?? teams[1];
   const targetAccountId = accountIdFromSteamId64(friendSteamId64);
   const players = teams.length
-    ? teams.flatMap((team) => Array.isArray(team.players) ? team.players : [])
-    : Array.isArray(game.players) ? game.players : [];
+    ? teams.flatMap((team) => (Array.isArray(team.players)
+      ? team.players.map((player) => publicPlayer(player, teamNumber(team)))
+      : []))
+    : (Array.isArray(game.players) ? game.players.map((player) => publicPlayer(player)) : []);
   const targetPlayer = targetAccountId
-    ? players.find((player) => integer(read(player, "accountId", "accountid"), 1, 0xffff_ffff) === targetAccountId)
+    ? players.find((player) => player.accountId === targetAccountId)
     : undefined;
+  const buildings = Array.isArray(game.buildings)
+    ? game.buildings.slice(0, 64).map(publicBuilding).filter(Boolean)
+    : [];
   const radiantNetWorth = integer(read(radiant, "netWorth", "net_worth"), 0, 100_000_000);
   const direNetWorth = integer(read(dire, "netWorth", "net_worth"), 0, 100_000_000);
   const match = compact({
@@ -119,7 +145,9 @@ export function toPublicMatch(game, friendSteamId64) {
     spectators: integer(game.spectators ?? root.spectators, 0, 10_000_000),
     radiantName: name(read(root, "teamNameRadiant", "team_name_radiant") ?? read(radiant, "teamName", "team_name")),
     direName: name(read(root, "teamNameDire", "team_name_dire") ?? read(dire, "teamName", "team_name")),
-    target: targetPlayer ? publicPlayer(targetPlayer) : undefined,
+    target: targetPlayer,
+    players: players.length ? Object.freeze(players.slice(0, 32)) : undefined,
+    buildings: buildings.length ? Object.freeze(buildings) : undefined,
   });
   return Object.keys(match).length ? match : null;
 }

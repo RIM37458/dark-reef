@@ -75,6 +75,9 @@ test("toPublicMatch extracts the watched player's hero, inventory, and combat re
           lh_count: 221,
           denies_count: 8,
           net_worth: 17320,
+          x: -2048.5,
+          y: 4096.25,
+          respawn_time: 0,
           items: [
             { item_ability_id: 63, name: "item_power_treads", sold: false },
             { item_ability_id: 116, name: "item_black_king_bar", sold: false },
@@ -82,7 +85,16 @@ test("toPublicMatch extracts the watched player's hero, inventory, and combat re
           ],
         }],
       },
-      { team_number: 3, score: 27, net_worth: 61200, players: [] },
+      {
+        team_number: 3,
+        score: 27,
+        net_worth: 61200,
+        players: [{ accountid: 8, heroid: 2, x: 3200, y: -1800, respawn_time: 18 }],
+      },
+    ],
+    buildings: [
+      { team: 2, type: 1, lane: 2, tier: 1, x: -5200, y: -6100, destroyed: false },
+      { team: 3, type: 1, lane: 3, tier: 1, x: 5200, y: 6100, destroyed: true },
     ],
   }, "76561198000000000");
 
@@ -101,6 +113,10 @@ test("toPublicMatch extracts the watched player's hero, inventory, and combat re
     lastHits: 221,
     denies: 8,
     netWorth: 17320,
+    team: 2,
+    x: -2048.5,
+    y: 4096.25,
+    respawnTime: 0,
     items: [
       {
         id: 63,
@@ -114,6 +130,16 @@ test("toPublicMatch extracts the watched player's hero, inventory, and combat re
       },
     ],
   });
+  assert.deepEqual(match.players.map(({ accountId, heroName, team, x, y, respawnTime }) => ({
+    accountId, heroName, team, x, y, respawnTime,
+  })), [
+    { accountId: 39734272, heroName: "Slark", team: 2, x: -2048.5, y: 4096.25, respawnTime: 0 },
+    { accountId: 8, heroName: "Axe", team: 3, x: 3200, y: -1800, respawnTime: 18 },
+  ]);
+  assert.deepEqual(match.buildings, [
+    { team: 2, type: 1, lane: 2, tier: 1, x: -5200, y: -6100, destroyed: false },
+    { team: 3, type: 1, lane: 3, tier: 1, x: 5200, y: 6100, destroyed: true },
+  ]);
 });
 
 test("toPublicMatch reads terse numeric inventory slots", () => {
