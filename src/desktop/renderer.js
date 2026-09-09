@@ -3,6 +3,7 @@ import { isTargetMarked, presentStatus } from "./status-view.js";
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
 const stopButton = document.querySelector("#stop-button");
+const demoButton = document.querySelector("#demo-button");
 const formError = document.querySelector("#form-error");
 const runState = document.querySelector("#run-state");
 const statusIndicator = document.querySelector("#status-indicator");
@@ -32,9 +33,10 @@ function restoreSettings() {
 function render(state) {
   const connecting = state.running === "connecting";
   const running = state.running === true;
+  const demoRunning = state.running === "demo";
   const presentation = presentStatus(state.status);
-  runState.textContent = connecting ? "接入中" : running ? "凝视中" : "沉寂";
-  runState.className = `run-state ${connecting ? "working" : running ? "active" : ""}`;
+  runState.textContent = connecting ? "接入中" : running ? "凝视中" : demoRunning ? "演习中" : "沉寂";
+  runState.className = `run-state ${connecting || demoRunning ? "working" : running ? "active" : ""}`;
   statusIndicator.className = `status-indicator ${presentation.tone}`;
   statusTitle.textContent = presentation.title;
   statusDetail.textContent = presentation.detail;
@@ -44,11 +46,13 @@ function render(state) {
   observedAt.dateTime = state.status?.observedAt ?? "";
   formError.hidden = !state.error;
   formError.textContent = state.error ?? "";
-  startButton.disabled = connecting || running;
+  startButton.disabled = connecting || running || demoRunning;
   startButton.textContent = connecting ? "正在下潜…" : "命令巡猎";
-  stopButton.disabled = !connecting && !running;
+  demoButton.disabled = connecting || running || demoRunning;
+  demoButton.textContent = demoRunning ? "演习进行中…" : "召入演示囚徒";
+  stopButton.disabled = !connecting && !running && !demoRunning;
   for (const element of form.elements) {
-    if (element !== stopButton) element.disabled = connecting || running;
+    if (element !== stopButton) element.disabled = connecting || running || demoRunning;
   }
   const prisoner = state.prisoner;
   const marked = isTargetMarked(state.status);
@@ -85,6 +89,7 @@ form.addEventListener("submit", async (event) => {
 });
 
 stopButton.addEventListener("click", async () => render(await window.watcher.stop()));
+demoButton.addEventListener("click", async () => render(await window.watcher.demo()));
 
 restoreSettings();
 window.watcher.onState(render);

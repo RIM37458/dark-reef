@@ -13,6 +13,7 @@ import {
 } from "electron";
 
 import { startWatcher } from "../app.js";
+import { createDemoSequence } from "../demo-sequence.js";
 import { loadSteamProfile } from "../steam-profile.js";
 import { createDesktopNotifier } from "../windows-notifier.js";
 import { createDesktopConfig } from "./desktop-config.js";
@@ -24,6 +25,7 @@ const assetsDirectory = path.resolve(directory, "../../assets");
 let mainWindow;
 let tray;
 let watcher;
+let demoSequence;
 let quitting = false;
 let startRevision = 0;
 let desktopState = Object.freeze({ running: false, status: null, prisoner: null, error: null });
@@ -118,7 +120,7 @@ function safeError(error) {
 }
 
 async function startMonitoring(input) {
-  if (watcher || desktopState.running === "connecting") return desktopState;
+  if (watcher || desktopState.running) return desktopState;
   const revision = ++startRevision;
   publish({ running: "connecting", status: { phase: "starting" }, error: null });
 
@@ -162,8 +164,34 @@ async function startMonitoring(input) {
   return desktopState;
 }
 
+function startDemo() {
+  if (watcher || desktopState.running) return desktopState;
+  const revision = ++startRevision;
+  const avatarDataUrl = nativeImage
+    .createFromPath(path.join(assetsDirectory, "demo-prisoner-bot.png"))
+    .resize({ width: 256, height: 256, quality: "best" })
+    .toDataURL();
+  const prisoner = Object.freeze({
+    steamId64: "DARK-REEF-ESCAPEE-01",
+    personaName: "小鱼人 · 斯拉克（演示）",
+    avatarDataUrl,
+  });
+  const notify = createDesktopNotifier({ NotificationImpl: Notification, onClick: showWindow });
+  publish({ running: "demo", prisoner, error: null });
+  demoSequence = createDemoSequence({
+    onFrame: ({ status, notify: shouldNotify }) => {
+      if (revision !== startRevision) return;
+      publish({ status: publicStatus(status), error: null });
+      if (shouldNotify) notify(status);
+    },
+  });
+  return desktopState;
+}
+
 async function stopMonitoring() {
   startRevision += 1;
+  demoSequence?.cancel();
+  demoSequence = undefined;
   const current = watcher;
   watcher = undefined;
   if (current) await current.stop();
@@ -181,6 +209,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     ipcMain.handle("watcher:get-state", () => desktopState);
     ipcMain.handle("watcher:start", (_event, input) => startMonitoring(input));
+    ipcMain.handle("watcher:demo", () => startDemo());
     ipcMain.handle("watcher:stop", () => stopMonitoring());
     createWindow();
     createTray();

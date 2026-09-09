@@ -412,6 +412,8 @@ button:disabled { cursor: default; opacity: 0.42; }
 button.primary { border-color: #d45046; background: linear-gradient(#b92e29, #74120f); }
 button.primary:hover:not(:disabled) { background: linear-gradient(#d23a32, #8d1915); }
 button.secondary { border-color: #49605b; background: linear-gradient(#1a2928, #0b1516); }
+button.demo { border-color: #756540; background: linear-gradient(#2c281d, #15140f); color: #c7b98e; }
+button.demo:hover:not(:disabled) { border-color: #a89258; background: linear-gradient(#3a321f, #1a1810); }
 
 .form-error {
   margin: 1rem 0 0;

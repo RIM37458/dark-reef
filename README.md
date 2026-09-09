@@ -4,6 +4,8 @@
 
 窗口关闭后应用会缩到系统托盘并继续监控。应用同时保留只允许本机访问的 JSON 状态接口。
 
+点击“召入演示囚徒”可以在不登录 Steam 的情况下，使用小鱼人斯拉克的英雄头像演示斯拉达巡猎、牢房点灯动画和 Windows 通知。演示不会读取或改动真实账号信息。
+
 ## 能得到什么
 
 - 好友当前是否存在可观战比赛
@@ -18,7 +20,7 @@
 
 ### 直接使用 EXE
 
-推荐运行 `Dota2-Dark-Reef-Monitor-0.2.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Dark-Reef-Monitor-0.2.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
+推荐运行 `Dota2-Dark-Reef-Monitor-0.3.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Dark-Reef-Monitor-0.3.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
 
 打开应用后填写：
 
