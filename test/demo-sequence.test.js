@@ -30,6 +30,16 @@ test("createDemoSequence stages a patrol before marking the bot prisoner", () =>
   assert.deepEqual(frames.at(-1).status.game.teams[0].players[0].items, [63, 174, 152, 116, 143]);
   const visibleMatch = toPublicMatch(frames.at(-1).status.game, "76561197960265735");
   assert.equal(visibleMatch.target.heroName, "Slark");
+  assert.equal(visibleMatch.players.length, 10);
+  assert.equal(visibleMatch.players.filter(({ team }) => team === 2).length, 5);
+  assert.equal(visibleMatch.players.filter(({ team }) => team === 3).length, 5);
+  assert.equal(visibleMatch.buildings.length, 12);
+  assert.ok(visibleMatch.players.every(({ x, y }) => Number.isFinite(x) && Number.isFinite(y)));
+  const firstMatch = toPublicMatch(frames.at(-3).status.game, "76561197960265735");
+  assert.notDeepEqual(
+    visibleMatch.players.map(({ x, y }) => [x, y]),
+    firstMatch.players.map(({ x, y }) => [x, y]),
+  );
   assert.deepEqual(visibleMatch.target.items.map(({ name }) => name), [
     "Power Treads",
     "Diffusal Blade",
