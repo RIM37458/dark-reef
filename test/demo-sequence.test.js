@@ -16,15 +16,17 @@ test("createDemoSequence stages a patrol before marking the bot prisoner", () =>
   });
 
   assert.deepEqual(frames.map((frame) => frame.status.phase), ["starting"]);
-  assert.deepEqual(scheduled.map(({ delay }) => delay), [1200, 2800]);
-  scheduled[0].callback();
-  scheduled[1].callback();
+  assert.deepEqual(scheduled.map(({ delay }) => delay), [1200, 2800, 4800, 6800]);
+  for (const { callback } of scheduled) callback();
   assert.deepEqual(frames.map((frame) => frame.status.phase), [
     "starting",
     "unavailable",
     "detailed_stats",
+    "detailed_stats",
+    "detailed_stats",
   ]);
-  assert.equal(frames.at(-1).notify, true);
+  assert.equal(frames.at(-1).status.game.radiantScore, 22);
+  assert.equal(frames.at(-1).notify, undefined);
   sequence.cancel();
 });
 
@@ -37,5 +39,5 @@ test("createDemoSequence cancels every pending frame", () => {
   });
 
   sequence.cancel();
-  assert.deepEqual(cleared, [1200, 2800]);
+  assert.deepEqual(cleared, [1200, 2800, 4800, 6800]);
 });

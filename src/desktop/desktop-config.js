@@ -16,10 +16,6 @@ export function createDesktopConfig(input, { sessionFile }) {
   if (typeof sessionFile !== "string" || !sessionFile) {
     throw new Error("A session file is required");
   }
-  if (input.notifications !== undefined && typeof input.notifications !== "boolean") {
-    throw new Error("notifications must be true or false");
-  }
-
   return parseConfig({
     STEAM_ACCOUNT: boundedText(input, "accountName", 128),
     STEAM_PASSWORD: boundedText(input, "password", 256),
@@ -27,6 +23,7 @@ export function createDesktopConfig(input, { sessionFile }) {
     STEAM_SESSION_FILE: sessionFile,
     FRIEND_STEAM_ID64: boundedText(input, "friendSteamId64", 17),
     STEAM_WEB_API_KEY: boundedText(input, "webApiKey", 128),
-    WINDOWS_NOTIFICATIONS: input.notifications === false ? "false" : "true",
+    WINDOWS_NOTIFICATIONS: "false",
+    POLL_INTERVAL_MS: "20000",
   });
 }

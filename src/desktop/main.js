@@ -8,15 +8,14 @@ import {
   ipcMain,
   Menu,
   nativeImage,
-  Notification,
   Tray,
 } from "electron";
 
 import { startWatcher } from "../app.js";
 import { createDemoSequence } from "../demo-sequence.js";
 import { fitImageWithin } from "../image-fit.js";
+import { toPublicMatch } from "../live-snapshot.js";
 import { loadSteamProfile } from "../steam-profile.js";
-import { createDesktopNotifier } from "../windows-notifier.js";
 import { createDesktopConfig } from "./desktop-config.js";
 
 const APP_ID = "com.codex.dota-friend-watcher";
@@ -39,6 +38,7 @@ function publicStatus(status) {
     serverSteamId: status.serverSteamId ? String(status.serverSteamId) : undefined,
     source: status.source,
     reason: status.reason,
+    match: toPublicMatch(status.game),
   });
 }
 
@@ -130,12 +130,8 @@ async function startMonitoring(input) {
       sessionFile: path.join(app.getPath("userData"), "steam-session.json"),
     });
     publish({ prisoner: { steamId64: config.friendSteamId64 } });
-    const notify = config.windowsNotifications
-      ? createDesktopNotifier({ NotificationImpl: Notification, onClick: showWindow })
-      : () => false;
     const startedWatcher = await startWatcher(config, {
       loginDota: Dota.login,
-      notify,
       onConnected: (bot) => {
         void loadSteamProfile({
           apiKey: config.steamWebApiKey,
@@ -178,13 +174,11 @@ function startDemo() {
     avatarDataUrl,
     portraitShape: "hero",
   });
-  const notify = createDesktopNotifier({ NotificationImpl: Notification, onClick: showWindow });
   publish({ running: "demo", prisoner, error: null });
   demoSequence = createDemoSequence({
-    onFrame: ({ status, notify: shouldNotify }) => {
+    onFrame: ({ status }) => {
       if (revision !== startRevision) return;
       publish({ status: publicStatus(status), error: null });
-      if (shouldNotify) notify(status);
     },
   });
   return desktopState;

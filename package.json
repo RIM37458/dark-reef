@@ -1,6 +1,6 @@
 {
   "name": "dota-friend-watcher",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Monitor a Steam friend's Dota 2 match from a Windows desktop app.",
   "author": "Dota Friend Watcher contributors",
   "private": true,

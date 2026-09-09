@@ -1,4 +1,9 @@
-import { isTargetMarked, presentStatus, screenForState } from "./status-view.js";
+import {
+  isTargetMarked,
+  presentLiveMatch,
+  presentStatus,
+  screenForState,
+} from "./status-view.js";
 
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
@@ -18,6 +23,18 @@ const prisonerCell = document.querySelector("#prisoner-cell");
 const hazeMark = document.querySelector("#haze-mark");
 const loginScreen = document.querySelector("#login-screen");
 const watchScreen = document.querySelector("#watch-screen");
+const matchPanel = document.querySelector("#match-panel");
+const matchFields = Object.freeze({
+  matchId: document.querySelector("#match-id"),
+  gameTime: document.querySelector("#game-time"),
+  radiantScore: document.querySelector("#radiant-score"),
+  direScore: document.querySelector("#dire-score"),
+  radiantLead: document.querySelector("#radiant-lead"),
+  spectators: document.querySelector("#spectators"),
+  radiantName: document.querySelector("#radiant-name"),
+  direName: document.querySelector("#dire-name"),
+  source: document.querySelector("#match-source"),
+});
 const rememberedFields = ["account-name", "friend-steam-id"];
 
 function rememberSettings() {
@@ -72,6 +89,13 @@ function render(state) {
   prisonerNumber.textContent = prisoner?.steamId64
     ? `NO. ${prisoner.steamId64}`
     : "NO. ———————————————";
+  const liveMatch = presentLiveMatch(state.status);
+  matchPanel.hidden = !liveMatch;
+  if (liveMatch) {
+    for (const [name, element] of Object.entries(matchFields)) {
+      element.textContent = liveMatch[name];
+    }
+  }
 }
 
 form.addEventListener("submit", async (event) => {
@@ -85,7 +109,6 @@ form.addEventListener("submit", async (event) => {
     password: document.querySelector("#password").value,
     guardCode: document.querySelector("#guard-code").value,
     webApiKey: document.querySelector("#web-api-key").value,
-    notifications: document.querySelector("#notifications").checked,
   };
   document.querySelector("#password").value = "";
   document.querySelector("#guard-code").value = "";

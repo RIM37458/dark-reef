@@ -22,7 +22,8 @@ test("createDesktopConfig converts bounded form input into runtime configuration
   assert.equal(config.steam.sessionFile, "C:\\AppData\\steam-session.json");
   assert.equal(config.friendSteamId64, "76561198000000000");
   assert.equal(config.steamWebApiKey, "api-key");
-  assert.equal(config.windowsNotifications, true);
+  assert.equal(config.windowsNotifications, false);
+  assert.equal(config.pollIntervalMs, 20_000);
 });
 
 test("createDesktopConfig rejects oversized and non-object renderer input", () => {

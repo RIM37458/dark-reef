@@ -1,10 +1,10 @@
 # 暗黑之礁 · 监控室
 
-这是一个带主窗口和系统托盘的 Windows 应用程序，不是网页。它无需启动 Dota 2 客户端，使用 Steam 账号连接 Dota 2 Game Coordinator，尝试观战指定好友，并在好友开局时显示 Windows 桌面通知。
+这是一个带主窗口和系统托盘的 Windows 应用程序，不是网页。它无需启动 Dota 2 客户端，使用 Steam 账号连接 Dota 2 Game Coordinator，尝试观战指定好友。桌面应用不会发送 Windows 弹窗通知。
 
 窗口关闭后应用会缩到系统托盘并继续监控。应用同时保留只允许本机访问的 JSON 状态接口。
 
-应用将入礁登录台与牢房观战层分开。点击登录台上的“押入小鱼人演示囚徒”，可以在不登录 Steam 的情况下，使用小鱼人斯拉克的英雄头像演示斯拉达巡猎、牢房点灯动画和 Windows 通知。演示不会读取或改动真实账号信息。
+应用将入礁登录台与牢房观战层分开。点击登录台上的“押入小鱼人演示囚徒”，可以在不登录 Steam 的情况下，使用小鱼人斯拉克的英雄头像演示斯拉达巡猎、牢房点灯动画和模拟战况。演示不会读取或改动真实账号信息。
 
 ## 能得到什么
 
@@ -12,7 +12,9 @@
 - 登录后从 Steam 好友资料中取得头像与昵称，并显示在铁栅囚室中
 - 观战请求的结果和 `serverSteamId`
 - 如果比赛进入 Valve SourceTV 热门列表：比赛 ID、时间、比分、经济领先等快照
-- 如果配置 Steam Web API Key 且 Valve 为该服务器提供统计：`GetRealtimeStats` 的完整 JSON
+- 如果配置 Steam Web API Key 且 Valve 为该服务器提供统计：在观战层显示 `GetRealtimeStats` 快照
+
+桌面观战层约每 20 秒刷新一次。SourceTV 本身是延迟直播，因此这里的“实时”表示持续更新 Valve 当前提供的快照，不保证与玩家屏幕同秒。
 
 普通路人局通常不在 SourceTV 热门列表中。这时服务会保留服务器 ID，并返回 `spectating_unlisted`；这不是程序故障，而是 Valve 当前的数据边界。
 
@@ -20,7 +22,7 @@
 
 ### 直接使用 EXE
 
-推荐运行 `Dota2-Dark-Reef-Monitor-0.4.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Dark-Reef-Monitor-0.4.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
+推荐运行 `Dota2-Dark-Reef-Monitor-0.5.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式。也可以运行不需要安装的 `Dota2-Dark-Reef-Monitor-0.5.0-x64-Portable.exe`。
 
 打开应用后填写：
 
@@ -80,8 +82,6 @@ Invoke-RestMethod http://127.0.0.1:8787/status
 
 服务只监听 `127.0.0.1`，不会直接暴露到局域网或公网。
 
-桌面通知只在状态从“未发现比赛”变为“发现比赛”时发送一次。持续处于同一场比赛不会每 30 秒重复提醒；比赛结束后再次开局会再次提醒。可在窗口高级设置中关闭通知。
-
 ## 状态说明
 
 | `phase` | 含义 |
@@ -123,7 +123,6 @@ pnpm run build:win
 - Steam 登录及刷新令牌行为：https://github.com/DoctorMcKay/node-steam-user
 - Valve Dota 2 观战 protobuf：https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/Protobufs/dota_gcmessages_client_watch.proto
 - [Electron BrowserWindow 与渲染沙箱](https://www.electronjs.org/docs/latest/api/browser-window)
-- [Electron 原生桌面通知及 Windows 要求](https://www.electronjs.org/docs/latest/tutorial/notifications)
 - [electron-builder Windows 安装版与便携版目标](https://www.electron.build/docs/win/)
 - [Node.js 环境文件参数](https://nodejs.org/api/cli.html#--env-file-if-existsfile)
 

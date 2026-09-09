@@ -377,7 +377,8 @@ footer { color: var(--muted); }
 .watch-heading p { margin-bottom: 0; }
 
 .watch-heading > span,
-.watch-controls > span {
+.watch-controls > span,
+.match-panel-heading > span {
   color: #647d77;
   font: 0.62rem/1.3 Consolas, monospace;
   letter-spacing: 0.11em;
@@ -387,6 +388,75 @@ footer { color: var(--muted); }
   margin-top: 0.8rem;
   padding: 0.85rem 0.25rem 0.1rem;
   border-top: 1px solid #263d3a;
+}
+
+.match-panel {
+  margin-top: 0.8rem;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid #304c4b;
+  background:
+    linear-gradient(90deg, rgba(55, 112, 105, 0.07) 1px, transparent 1px),
+    linear-gradient(rgba(55, 112, 105, 0.07) 1px, transparent 1px),
+    rgba(2, 10, 12, 0.92);
+  background-size: 1.2rem 1.2rem;
+  box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.72);
+}
+
+.match-panel-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid #294442;
+}
+
+.match-panel-heading h3 { margin: 0; color: #c8c0a6; font: 700 0.95rem/1.2 Georgia, serif; }
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 7rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 0;
+}
+
+.team,
+.match-clock {
+  display: grid;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.team span,
+.match-clock span,
+.match-facts dt {
+  color: #69857f;
+  font: 0.62rem/1.2 Consolas, monospace;
+  letter-spacing: 0.09em;
+}
+
+.team strong { font: 700 2rem/1 Georgia, serif; }
+.radiant-team strong { color: #8ec8ab; text-shadow: 0 0 0.7rem rgba(80, 181, 132, 0.28); }
+.dire-team strong { color: #c77a76; text-shadow: 0 0 0.7rem rgba(188, 72, 68, 0.28); }
+.match-clock strong { color: #d1c8a7; font: 700 1.1rem/1 Consolas, monospace; }
+
+.match-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid #294442;
+}
+
+.match-facts > div { min-width: 0; padding: 0.7rem 0.65rem 0; text-align: center; }
+.match-facts > div + div { border-left: 1px solid #294442; }
+.match-facts dd {
+  margin: 0.25rem 0 0;
+  overflow: hidden;
+  color: #a6b9b2;
+  font: 0.72rem/1.2 Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .section-heading {
@@ -441,9 +511,6 @@ details {
 
 summary { cursor: pointer; color: #9f967b; font: 700 0.72rem/1 Consolas, monospace; letter-spacing: 0.08em; }
 .wide-field { margin-top: 1rem; }
-.checkbox-field { display: flex; align-items: center; gap: 0.65rem; margin-top: 0.9rem; font-family: "Segoe UI Variable", "Microsoft YaHei UI", sans-serif; font-weight: 400; letter-spacing: 0; }
-.checkbox-field input { width: 1rem; min-height: 1rem; height: 1rem; accent-color: var(--blood); }
-
 .actions { display: flex; align-items: center; gap: 0.7rem; margin-top: 1.1rem; }
 .actions span { margin-left: auto; font-size: 0.7rem; }
 
@@ -524,4 +591,6 @@ code { color: #72918a; }
   .prisoner-cell { width: 9rem; justify-self: center; }
   .status-copy { padding-right: 0; }
   .status-copy::before, .status-copy::after { display: none; }
+  .match-facts { grid-template-columns: 1fr; }
+  .match-facts > div + div { border-top: 1px solid #294442; border-left: 0; }
 }

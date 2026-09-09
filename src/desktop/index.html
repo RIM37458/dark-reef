@@ -68,10 +68,6 @@
                 <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
                 <small>用于向 Valve 索取更深层的实时战况，不会显露在观察窗中。</small>
               </label>
-              <label class="checkbox-field">
-                <input id="notifications" name="notifications" type="checkbox" checked />
-                <span>目标进入战场时敲响 Windows 警钟</span>
-              </label>
             </details>
 
             <p id="form-error" class="form-error" role="alert" hidden></p>
@@ -113,6 +109,34 @@
             <p id="status-detail">向斯拉达呈交看守者铭牌与囚徒编号，开启巡猎。</p>
             <time id="observed-at" datetime=""></time>
           </div>
+        </section>
+        <section id="match-panel" class="match-panel" aria-labelledby="match-panel-title" aria-live="polite" hidden>
+          <div class="match-panel-heading">
+            <div>
+              <p class="screen-index">BATTLE ECHO // LIVE FEED</p>
+              <h3 id="match-panel-title">战场实时回响</h3>
+            </div>
+            <span id="match-source">—</span>
+          </div>
+          <div class="scoreboard">
+            <div class="team radiant-team">
+              <span id="radiant-name">天辉</span>
+              <strong id="radiant-score">—</strong>
+            </div>
+            <div class="match-clock">
+              <span>战局时刻</span>
+              <strong id="game-time">—</strong>
+            </div>
+            <div class="team dire-team">
+              <span id="dire-name">夜魇</span>
+              <strong id="dire-score">—</strong>
+            </div>
+          </div>
+          <dl class="match-facts">
+            <div><dt>战局编号</dt><dd id="match-id">—</dd></div>
+            <div><dt>经济天平</dt><dd id="radiant-lead">—</dd></div>
+            <div><dt>旁观灵魂</dt><dd id="spectators">—</dd></div>
+          </dl>
         </section>
         <div class="watch-controls">
           <button id="stop-button" class="secondary" type="button" disabled>离开观战层并收回雾霭</button>

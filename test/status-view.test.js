@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { isTargetMarked, presentStatus, screenForState } from "../src/desktop/status-view.js";
+import {
+  isTargetMarked,
+  presentLiveMatch,
+  presentStatus,
+  screenForState,
+} from "../src/desktop/status-view.js";
 
 test("presentStatus gives every watcher phase a user-facing state", () => {
   assert.equal(presentStatus(null).title, "深渊囚室静默");
@@ -30,4 +35,32 @@ test("screenForState separates the entry console from the prison watch floor", (
   assert.equal(screenForState({ running: "connecting" }), "watch");
   assert.equal(screenForState({ running: "demo" }), "watch");
   assert.equal(screenForState({ running: true }), "watch");
+});
+
+test("presentLiveMatch formats the current score, clock, lead, and source", () => {
+  assert.deepEqual(presentLiveMatch({
+    phase: "detailed_stats",
+    source: "gc_source_tv",
+    match: {
+      matchId: "8988000000",
+      gameTime: 901,
+      radiantScore: 12,
+      direScore: 9,
+      radiantLead: -2345,
+      spectators: 81,
+      radiantName: "天辉",
+      direName: "夜魇",
+    },
+  }), {
+    matchId: "8988000000",
+    gameTime: "15:01",
+    radiantScore: "12",
+    direScore: "9",
+    radiantLead: "夜魇领先 2,345",
+    spectators: "81",
+    radiantName: "天辉",
+    direName: "夜魇",
+    source: "Dota 2 协调服务器 · 延迟直播",
+  });
+  assert.equal(presentLiveMatch({ phase: "spectating_unlisted" }), null);
 });
