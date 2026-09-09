@@ -61,9 +61,27 @@ function lead(value) {
   return `${value > 0 ? "天辉" : "夜魇"}领先 ${Math.abs(value).toLocaleString("en-US")}`;
 }
 
+function count(value) {
+  return Number.isInteger(value) ? value.toLocaleString("en-US") : "—";
+}
+
+function presentTarget(target) {
+  if (!target) return undefined;
+  return {
+    heroName: target.heroName ?? (target.heroId ? `英雄 #${target.heroId}` : "英雄未公开"),
+    heroImageUrl: target.heroImageUrl,
+    level: count(target.level),
+    kda: `${count(target.kills)} / ${count(target.deaths)} / ${count(target.assists)}`,
+    lastHits: `${count(target.lastHits)} / ${count(target.denies)}`,
+    netWorth: count(target.netWorth),
+    items: target.items ?? [],
+  };
+}
+
 export function presentLiveMatch(status) {
   if (status?.phase !== "detailed_stats" || !status.match) return null;
   const match = status.match;
+  const target = presentTarget(match.target);
   return {
     matchId: match.matchId ?? "未公开",
     gameTime: gameClock(match.gameTime),
@@ -78,5 +96,6 @@ export function presentLiveMatch(status) {
       : status.source === "valve_web_api"
         ? "Valve 实时统计接口"
         : "暗黑之礁演示回路",
+    ...(target ? { target } : {}),
   };
 }

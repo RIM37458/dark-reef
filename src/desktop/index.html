@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.cloudflare.steamstatic.com; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>暗黑之礁 · 监控室</title>
@@ -137,6 +137,32 @@
             <div><dt>经济天平</dt><dd id="radiant-lead">—</dd></div>
             <div><dt>旁观灵魂</dt><dd id="spectators">—</dd></div>
           </dl>
+          <div class="target-intel">
+            <p id="target-sealed" class="target-sealed">目标英雄与装备未随本次回响公开。</p>
+            <div id="target-details" class="target-details" hidden>
+              <div class="target-hero">
+                <img id="target-hero-image" alt="" hidden />
+                <div>
+                  <span>目标作战形态</span>
+                  <strong id="target-hero-name">英雄未公开</strong>
+                  <small>等级 <b id="target-level">—</b></small>
+                </div>
+              </div>
+              <dl class="target-stats">
+                <div><dt>K / D / A</dt><dd id="target-kda">— / — / —</dd></div>
+                <div><dt>补刀 / 反补</dt><dd id="target-last-hits">— / —</dd></div>
+                <div><dt>个人净资产</dt><dd id="target-net-worth">—</dd></div>
+              </dl>
+              <div class="equipment-rack">
+                <h4>缴获物证 · 当前装备</h4>
+                <ol id="equipment-list" aria-label="目标当前装备"></ol>
+              </div>
+            </div>
+          </div>
+          <section class="battle-log" aria-labelledby="battle-log-title">
+            <h4 id="battle-log-title">斯拉达战场口述</h4>
+            <ol id="battle-feed"></ol>
+          </section>
         </section>
         <div class="watch-controls">
           <button id="stop-button" class="secondary" type="button" disabled>离开观战层并收回雾霭</button>

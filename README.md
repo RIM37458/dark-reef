@@ -13,6 +13,7 @@
 - 观战请求的结果和 `serverSteamId`
 - 如果比赛进入 Valve SourceTV 热门列表：比赛 ID、时间、比分、经济领先等快照
 - 如果配置 Steam Web API Key 且 Valve 为该服务器提供统计：在观战层显示 `GetRealtimeStats` 快照
+- Valve 快照包含目标玩家时：显示英雄、等级、KDA、补反、个人净资产、当前装备与快照变化战报
 
 桌面观战层约每 20 秒刷新一次。SourceTV 本身是延迟直播，因此这里的“实时”表示持续更新 Valve 当前提供的快照，不保证与玩家屏幕同秒。
 
@@ -22,7 +23,7 @@
 
 ### 直接使用 EXE
 
-推荐运行 `Dota2-Dark-Reef-Monitor-0.5.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式。也可以运行不需要安装的 `Dota2-Dark-Reef-Monitor-0.5.0-x64-Portable.exe`。
+推荐运行 `Dota2-Dark-Reef-Monitor-0.6.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式。也可以运行不需要安装的 `Dota2-Dark-Reef-Monitor-0.6.0-x64-Portable.exe`。
 
 打开应用后填写：
 
@@ -120,6 +121,7 @@ pnpm run build:win
 ## 数据源依据
 
 - dotakit 的 `spectateFriend`、SourceTV 与登录接口：https://github.com/beekamai/dotakit#readme
+- 英雄与物品 ID、名称和官方图片路径：https://github.com/odota/dotaconstants
 - Steam 登录及刷新令牌行为：https://github.com/DoctorMcKay/node-steam-user
 - Valve Dota 2 观战 protobuf：https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/Protobufs/dota_gcmessages_client_watch.proto
 - [Electron BrowserWindow 与渲染沙箱](https://www.electronjs.org/docs/latest/api/browser-window)

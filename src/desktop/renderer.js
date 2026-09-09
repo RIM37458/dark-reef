@@ -4,6 +4,7 @@ import {
   presentStatus,
   screenForState,
 } from "./status-view.js";
+import { describeBattleChanges } from "../battle-feed.js";
 
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
@@ -35,7 +36,83 @@ const matchFields = Object.freeze({
   direName: document.querySelector("#dire-name"),
   source: document.querySelector("#match-source"),
 });
+const targetSealed = document.querySelector("#target-sealed");
+const targetDetails = document.querySelector("#target-details");
+const targetHeroImage = document.querySelector("#target-hero-image");
+const targetHeroName = document.querySelector("#target-hero-name");
+const targetLevel = document.querySelector("#target-level");
+const targetKda = document.querySelector("#target-kda");
+const targetLastHits = document.querySelector("#target-last-hits");
+const targetNetWorth = document.querySelector("#target-net-worth");
+const equipmentList = document.querySelector("#equipment-list");
+const battleFeed = document.querySelector("#battle-feed");
 const rememberedFields = ["account-name", "friend-steam-id"];
+let previousMatch;
+let battleEntries = [];
+
+function renderEquipment(items) {
+  const slots = [];
+  for (let index = 0; index < 9; index += 1) {
+    const slot = document.createElement("li");
+    const item = items[index];
+    slot.className = item ? "equipment-slot occupied" : "equipment-slot";
+    if (item) {
+      if (item.imageUrl) {
+        const image = document.createElement("img");
+        image.src = item.imageUrl;
+        image.alt = "";
+        image.referrerPolicy = "no-referrer";
+        slot.append(image);
+      }
+      const label = document.createElement("span");
+      label.textContent = item.name;
+      label.title = item.name;
+      slot.append(label);
+    } else {
+      slot.setAttribute("aria-label", "空装备栏");
+      slot.textContent = "—";
+    }
+    slots.push(slot);
+  }
+  equipmentList.replaceChildren(...slots);
+}
+
+function renderTarget(target) {
+  targetSealed.hidden = Boolean(target);
+  targetDetails.hidden = !target;
+  if (!target) return;
+  targetHeroImage.hidden = !target.heroImageUrl;
+  targetHeroImage.src = target.heroImageUrl ?? "";
+  targetHeroImage.alt = target.heroImageUrl ? `${target.heroName} 英雄肖像` : "";
+  targetHeroImage.referrerPolicy = "no-referrer";
+  targetHeroName.textContent = target.heroName;
+  targetLevel.textContent = target.level;
+  targetKda.textContent = target.kda;
+  targetLastHits.textContent = target.lastHits;
+  targetNetWorth.textContent = target.netWorth;
+  renderEquipment(target.items);
+}
+
+function renderBattleFeed(match, observedAt) {
+  if (!match) {
+    previousMatch = undefined;
+    battleEntries = [];
+    battleFeed.replaceChildren();
+    return;
+  }
+  if (previousMatch?.matchId !== match.matchId) battleEntries = [];
+  const timestamp = observedAt ? new Date(observedAt).toLocaleTimeString() : "当前";
+  for (const event of describeBattleChanges(previousMatch, match)) {
+    battleEntries.push(`${timestamp} · ${event}`);
+  }
+  battleEntries = battleEntries.slice(-8);
+  battleFeed.replaceChildren(...battleEntries.map((entry) => {
+    const item = document.createElement("li");
+    item.textContent = entry;
+    return item;
+  }));
+  previousMatch = match;
+}
 
 function rememberSettings() {
   for (const id of rememberedFields) {
@@ -96,6 +173,8 @@ function render(state) {
       element.textContent = liveMatch[name];
     }
   }
+  renderTarget(liveMatch?.target);
+  renderBattleFeed(state.status?.match, state.status?.observedAt);
 }
 
 form.addEventListener("submit", async (event) => {

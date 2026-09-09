@@ -19,6 +19,7 @@ import { loadSteamProfile } from "../steam-profile.js";
 import { createDesktopConfig } from "./desktop-config.js";
 
 const APP_ID = "com.codex.dota-friend-watcher";
+const DEMO_STEAM_ID64 = "76561197960265735";
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const assetsDirectory = path.resolve(directory, "../../assets");
 
@@ -30,7 +31,7 @@ let quitting = false;
 let startRevision = 0;
 let desktopState = Object.freeze({ running: false, status: null, prisoner: null, error: null });
 
-function publicStatus(status) {
+function publicStatus(status, friendSteamId64) {
   if (!status || typeof status !== "object") return null;
   return Object.freeze({
     phase: status.phase,
@@ -38,7 +39,7 @@ function publicStatus(status) {
     serverSteamId: status.serverSteamId ? String(status.serverSteamId) : undefined,
     source: status.source,
     reason: status.reason,
-    match: toPublicMatch(status.game),
+    match: toPublicMatch(status.game, friendSteamId64),
   });
 }
 
@@ -143,7 +144,7 @@ async function startMonitoring(input) {
       },
       onStatus: (status) => {
         if (revision === startRevision) {
-          publish({ status: publicStatus(status), error: null });
+          publish({ status: publicStatus(status, config.friendSteamId64), error: null });
         }
       },
     });
@@ -152,7 +153,7 @@ async function startMonitoring(input) {
       return desktopState;
     }
     watcher = startedWatcher;
-    publish({ running: true, status: publicStatus(watcher.getStatus()), error: null });
+    publish({ running: true, status: publicStatus(watcher.getStatus(), config.friendSteamId64), error: null });
   } catch (error) {
     if (revision !== startRevision) return desktopState;
     watcher = undefined;
@@ -178,7 +179,7 @@ function startDemo() {
   demoSequence = createDemoSequence({
     onFrame: ({ status }) => {
       if (revision !== startRevision) return;
-      publish({ status: publicStatus(status), error: null });
+      publish({ status: publicStatus(status, DEMO_STEAM_ID64), error: null });
     },
   });
   return desktopState;

@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { toPublicMatch } from "../src/live-snapshot.js";
+import { accountIdFromSteamId64, toPublicMatch } from "../src/live-snapshot.js";
+
+test("accountIdFromSteamId64 derives the public Dota account id", () => {
+  assert.equal(accountIdFromSteamId64("76561198000000000"), 39734272);
+  assert.equal(accountIdFromSteamId64("not-a-steam-id"), undefined);
+});
 
 test("toPublicMatch normalizes a SourceTV snapshot", () => {
   assert.deepEqual(toPublicMatch({
@@ -50,4 +55,75 @@ test("toPublicMatch accepts the nested Valve Web API shape and drops unsafe valu
 test("toPublicMatch rejects malformed match payloads", () => {
   assert.equal(toPublicMatch(null), null);
   assert.equal(toPublicMatch({ matchId: "not-a-match" }), null);
+});
+
+test("toPublicMatch extracts the watched player's hero, inventory, and combat record", () => {
+  const match = toPublicMatch({
+    match: { match_id: "8988000002", game_time: 1500 },
+    teams: [
+      {
+        team_number: 2,
+        score: 31,
+        net_worth: 65500,
+        players: [{
+          accountid: 39734272,
+          heroid: 93,
+          level: 21,
+          kill_count: 9,
+          death_count: 3,
+          assists_count: 14,
+          lh_count: 221,
+          denies_count: 8,
+          net_worth: 17320,
+          items: [
+            { item_ability_id: 63, name: "item_power_treads", sold: false },
+            { item_ability_id: 116, name: "item_black_king_bar", sold: false },
+            { item_ability_id: 174, name: "item_diffusal_blade", sold: true },
+          ],
+        }],
+      },
+      { team_number: 3, score: 27, net_worth: 61200, players: [] },
+    ],
+  }, "76561198000000000");
+
+  assert.equal(match.radiantScore, 31);
+  assert.equal(match.direScore, 27);
+  assert.equal(match.radiantLead, 4300);
+  assert.deepEqual(match.target, {
+    accountId: 39734272,
+    heroId: 93,
+    heroName: "Slark",
+    heroImageUrl: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/slark.png",
+    level: 21,
+    kills: 9,
+    deaths: 3,
+    assists: 14,
+    lastHits: 221,
+    denies: 8,
+    netWorth: 17320,
+    items: [
+      {
+        id: 63,
+        name: "Power Treads",
+        imageUrl: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/power_treads.png",
+      },
+      {
+        id: 116,
+        name: "Black King Bar",
+        imageUrl: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/black_king_bar.png",
+      },
+    ],
+  });
+});
+
+test("toPublicMatch reads terse numeric inventory slots", () => {
+  const match = toPublicMatch({
+    match: { match_id: "8988000003" },
+    teams: [{
+      team_number: 2,
+      players: [{ accountid: 39734272, heroid: 93, items: [63, 116, 0, -1] }],
+    }],
+  }, "76561198000000000");
+
+  assert.deepEqual(match.target.items.map(({ id }) => id), [63, 116]);
 });

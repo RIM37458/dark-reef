@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createDemoSequence } from "../src/demo-sequence.js";
+import { toPublicMatch } from "../src/live-snapshot.js";
 
 test("createDemoSequence stages a patrol before marking the bot prisoner", () => {
   const frames = [];
@@ -25,7 +26,17 @@ test("createDemoSequence stages a patrol before marking the bot prisoner", () =>
     "detailed_stats",
     "detailed_stats",
   ]);
-  assert.equal(frames.at(-1).status.game.radiantScore, 22);
+  assert.equal(frames.at(-1).status.game.teams[0].score, 22);
+  assert.deepEqual(frames.at(-1).status.game.teams[0].players[0].items, [63, 174, 152, 116, 143]);
+  const visibleMatch = toPublicMatch(frames.at(-1).status.game, "76561197960265735");
+  assert.equal(visibleMatch.target.heroName, "Slark");
+  assert.deepEqual(visibleMatch.target.items.map(({ name }) => name), [
+    "Power Treads",
+    "Diffusal Blade",
+    "Shadow Blade",
+    "Black King Bar",
+    "Skull Basher",
+  ]);
   assert.equal(frames.at(-1).notify, undefined);
   sequence.cancel();
 });

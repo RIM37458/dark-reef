@@ -50,6 +50,19 @@ test("presentLiveMatch formats the current score, clock, lead, and source", () =
       spectators: 81,
       radiantName: "天辉",
       direName: "夜魇",
+      target: {
+        heroId: 93,
+        heroName: "Slark",
+        heroImageUrl: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/slark.png",
+        level: 21,
+        kills: 9,
+        deaths: 3,
+        assists: 14,
+        lastHits: 221,
+        denies: 8,
+        netWorth: 17320,
+        items: [{ id: 116, name: "Black King Bar", imageUrl: "https://cdn.example/item.png" }],
+      },
     },
   }), {
     matchId: "8988000000",
@@ -61,6 +74,15 @@ test("presentLiveMatch formats the current score, clock, lead, and source", () =
     radiantName: "天辉",
     direName: "夜魇",
     source: "Dota 2 协调服务器 · 延迟直播",
+    target: {
+      heroName: "Slark",
+      heroImageUrl: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/slark.png",
+      level: "21",
+      kda: "9 / 3 / 14",
+      lastHits: "221 / 8",
+      netWorth: "17,320",
+      items: [{ id: 116, name: "Black King Bar", imageUrl: "https://cdn.example/item.png" }],
+    },
   });
   assert.equal(presentLiveMatch({ phase: "spectating_unlisted" }), null);
 });

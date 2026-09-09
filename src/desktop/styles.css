@@ -459,6 +459,117 @@ footer { color: var(--muted); }
   white-space: nowrap;
 }
 
+.target-intel {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #294442;
+}
+
+.target-sealed {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px dashed #3b514e;
+  color: #6d817c;
+  text-align: center;
+}
+
+.target-details {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 0.8rem 1rem;
+}
+
+.target-hero {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.target-hero img {
+  width: 6.2rem;
+  height: 3.5rem;
+  border: 1px solid #55736d;
+  object-fit: cover;
+  filter: saturate(0.75) contrast(1.12);
+}
+
+.target-hero div { display: grid; min-width: 0; gap: 0.22rem; }
+.target-hero span,
+.equipment-rack h4,
+.battle-log h4 {
+  margin: 0;
+  color: #68847e;
+  font: 0.6rem/1.2 Consolas, monospace;
+  letter-spacing: 0.09em;
+}
+.target-hero strong { overflow: hidden; color: #c7bea1; text-overflow: ellipsis; white-space: nowrap; }
+.target-hero small { color: #718b85; }
+.target-hero b { color: #b7c8c1; font-weight: 700; }
+
+.target-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  margin: 0;
+}
+
+.target-stats > div { min-width: 0; padding: 0 0.7rem; text-align: center; }
+.target-stats > div + div { border-left: 1px solid #294442; }
+.target-stats dt { color: #69857f; font: 0.58rem/1.2 Consolas, monospace; letter-spacing: 0.08em; }
+.target-stats dd { margin: 0.28rem 0 0; color: #bbc8c2; font: 0.76rem/1 Consolas, monospace; }
+
+.equipment-rack { grid-column: 1 / -1; }
+.equipment-rack h4 { margin-bottom: 0.45rem; }
+#equipment-list {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.equipment-slot {
+  display: grid;
+  min-width: 0;
+  height: 4rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #2f4744;
+  background: rgba(1, 7, 8, 0.9);
+  color: #354a47;
+  font: 0.65rem/1 Consolas, monospace;
+}
+
+.equipment-slot.occupied { grid-template-rows: 2.6rem minmax(0, 1fr); border-color: #526a61; }
+.equipment-slot img { width: 100%; height: 2.6rem; object-fit: cover; }
+.equipment-slot span {
+  max-width: 100%;
+  padding: 0.15rem 0.22rem;
+  overflow: hidden;
+  color: #8ba09a;
+  font-size: 0.48rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-log {
+  margin-top: 0.8rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #294442;
+}
+
+#battle-feed {
+  display: grid;
+  gap: 0.28rem;
+  max-height: 5.5rem;
+  margin: 0.45rem 0 0;
+  padding-left: 1.25rem;
+  overflow-y: auto;
+  color: #899e98;
+  font: 0.65rem/1.4 Consolas, "Microsoft YaHei UI", monospace;
+}
+
 .section-heading {
   display: flex;
   align-items: center;
@@ -579,6 +690,9 @@ code { color: #72918a; }
   .status-panel { grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; }
   .portrait-frame { width: 5.5rem; height: 5.5rem; }
   .field-grid { grid-template-columns: 1fr; }
+  .target-details { grid-template-columns: 1fr; }
+  .equipment-rack { grid-column: auto; }
+  #equipment-list { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .actions { align-items: stretch; flex-direction: column; }
   .actions span { margin-left: 0; text-align: center; }
   footer { flex-direction: column; }
@@ -593,4 +707,7 @@ code { color: #72918a; }
   .status-copy::before, .status-copy::after { display: none; }
   .match-facts { grid-template-columns: 1fr; }
   .match-facts > div + div { border-top: 1px solid #294442; border-left: 0; }
+  .target-stats { grid-template-columns: 1fr; gap: 0.5rem; }
+  .target-stats > div + div { padding-top: 0.5rem; border-top: 1px solid #294442; border-left: 0; }
+  #equipment-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

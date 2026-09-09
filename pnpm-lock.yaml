@@ -12,6 +12,9 @@ importers:
 
   .:
     dependencies:
+      dotaconstants:
+        specifier: 10.8.0
+        version: 10.8.0
       dotakit:
         specifier: 0.4.0
         version: 0.4.0(steam-user@5.3.0(supports-color@7.2.0))
@@ -419,6 +422,9 @@ packages:
 
   dmg-builder@26.15.3:
     resolution: {integrity: sha512-O3zJUFUYHJKgzPqioHxfxzBzlSC1eXCSr79gMSBKBP5AgjjpmrydMsMLotEg9fAJF36vdUncb+4ndRNxoPdlSQ==}
+
+  dotaconstants@10.8.0:
+    resolution: {integrity: sha512-4imDHLtqBg4abJ2Q/t2Kac/rM5kB5mCBF1lXaUDFtmoJ+TDku8TZ+R8ilU5l7xWpLZBEEYAe+u40CWxku9iFWA==}
 
   dotakit@0.4.0:
     resolution: {integrity: sha512-JmyXxAUZPqZZUR3TdCOi/8662kolM3/jidzEvk7D3k/NobAWGDxP7zWYASxuvjkHS02yOzn36feuI4rPcAAa6g==}
@@ -1286,7 +1292,7 @@ snapshots:
       env-paths: 3.0.0
       graceful-fs: 4.2.11
       progress: 2.0.3
-      semver: 7.8.5
+      semver: 7.7.4
       sumchecker: 3.0.1(supports-color@7.2.0)
     optionalDependencies:
       undici: 7.29.1
@@ -1721,6 +1727,8 @@ snapshots:
       - electron-builder-squirrel-windows
       - supports-color
 
+  dotaconstants@10.8.0: {}
+
   dotakit@0.4.0(steam-user@5.3.0(supports-color@7.2.0)):
     dependencies:
       '@bufbuild/protobuf': 2.14.1
@@ -1947,7 +1955,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.4
+      semver: 7.8.5
       serialize-error: 7.0.1
     optional: true
 
