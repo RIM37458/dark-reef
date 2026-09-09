@@ -21,91 +21,103 @@
         <span id="run-state" class="run-state">沉寂</span>
       </header>
 
-      <section class="status-panel" role="status" aria-labelledby="status-title" aria-live="polite">
-        <div id="prisoner-cell" class="prisoner-cell" aria-label="暗黑之礁囚徒档案">
-          <div class="portrait-frame">
-            <img id="prisoner-avatar" alt="囚徒头像" hidden />
-            <span id="prisoner-seal" class="prisoner-seal" aria-hidden="true">?</span>
-            <span id="haze-mark" class="haze-mark" aria-label="侵蚀雾霭已标记目标" hidden>
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <path d="M32 5 39 21 56 16 45 32 57 46 39 43 32 59 25 43 7 46 19 32 8 16 25 21Z" />
-                <circle cx="32" cy="32" r="9" />
-              </svg>
-            </span>
-            <span class="cell-bar bar-one" aria-hidden="true"></span>
-            <span class="cell-bar bar-two" aria-hidden="true"></span>
-            <span class="cell-bar bar-three" aria-hidden="true"></span>
+      <section id="login-screen" class="screen login-screen" aria-labelledby="configuration-title">
+        <section class="configuration">
+          <div class="section-heading">
+            <div>
+              <p class="screen-index">ENTRY CONSOLE // ACCESS I</p>
+              <h2 id="configuration-title">暗黑之礁入狱许可台</h2>
+              <p>向深海卫士呈交身份。无需唤醒地表客户端；斯拉达会独自在暗流中巡逻。</p>
+            </div>
           </div>
-          <strong id="prisoner-name">身份尚未显形</strong>
-          <span id="prisoner-number">NO. ———————————————</span>
-        </div>
-        <div class="status-copy">
-          <div id="status-indicator" class="status-indicator idle" aria-hidden="true"></div>
-          <h2 id="status-title">深渊囚室静默</h2>
-          <p id="status-detail">向斯拉达呈交看守者铭牌与囚徒编号，开启巡猎。</p>
-          <time id="observed-at" datetime=""></time>
-        </div>
+
+          <form id="watcher-form">
+            <div class="field-grid">
+              <label>
+                <span>Ⅰ · 看守者铭牌（Steam 登录名）</span>
+                <input id="account-name" name="accountName" autocomplete="username" placeholder="STEAM ACCOUNT" required maxlength="128" />
+              </label>
+              <label>
+                <span>Ⅱ · 囚徒编号（好友 SteamID64）</span>
+                <input
+                  id="friend-steam-id"
+                  name="friendSteamId64"
+                  inputmode="numeric"
+                  pattern="7656119[0-9]{10}"
+                  placeholder="STEAMID64 · 17 DIGITS"
+                  required
+                  maxlength="17"
+                />
+              </label>
+              <label>
+                <span>Ⅲ · 看守者口令（Steam 密码）</span>
+                <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" />
+                <small>契约建立后可留空；口令不会被封存。</small>
+              </label>
+              <label>
+                <span>Ⅳ · 守卫密令（Steam Guard）</span>
+                <input id="guard-code" name="guardCode" autocomplete="one-time-code" maxlength="32" />
+                <small>仅在守卫索取密令时铭刻。</small>
+              </label>
+            </div>
+
+            <details>
+              <summary>开启下层禁区</summary>
+              <label class="wide-field">
+                <span>Ⅴ · 远视密钥（Steam Web API Key）</span>
+                <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
+                <small>用于向 Valve 索取更深层的实时战况，不会显露在观察窗中。</small>
+              </label>
+              <label class="checkbox-field">
+                <input id="notifications" name="notifications" type="checkbox" checked />
+                <span>目标进入战场时敲响 Windows 警钟</span>
+              </label>
+            </details>
+
+            <p id="form-error" class="form-error" role="alert" hidden></p>
+            <div class="actions login-actions">
+              <button id="start-button" class="primary" type="submit">呈交许可并巡猎</button>
+              <button id="demo-button" class="demo" type="button">押入小鱼人演示囚徒</button>
+              <span>演示不连接 Steam，也不会读取或保存真实账号资料。</span>
+            </div>
+          </form>
+        </section>
       </section>
 
-      <section class="configuration" aria-labelledby="configuration-title">
-        <div class="section-heading">
+      <section id="watch-screen" class="screen watch-screen" aria-labelledby="watch-floor-title" hidden>
+        <div class="watch-heading">
           <div>
-            <h2 id="configuration-title">斯拉达的追猎铭盘</h2>
-            <p>向深海卫士呈交身份。无需唤醒地表客户端；斯拉达会独自在暗流中巡逻。</p>
+            <p class="screen-index">PRISON WATCH // CELL 07</p>
+            <h2 id="watch-floor-title">斯拉达的牢房观战层</h2>
           </div>
+          <span>SLITHEREEN EYES ONLY</span>
         </div>
-
-        <form id="watcher-form">
-          <div class="field-grid">
-            <label>
-              <span>Ⅰ · 看守者铭牌</span>
-              <input id="account-name" name="accountName" autocomplete="username" placeholder="STEAM ACCOUNT" required maxlength="128" />
-            </label>
-            <label>
-              <span>Ⅱ · 囚徒编号</span>
-              <input
-                id="friend-steam-id"
-                name="friendSteamId64"
-                inputmode="numeric"
-                pattern="7656119[0-9]{10}"
-                placeholder="STEAMID64 · 17 DIGITS"
-                required
-                maxlength="17"
-              />
-            </label>
-            <label>
-              <span>Ⅲ · 通行血印</span>
-              <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" />
-              <small>契约建立后可留空；密钥不会被封存。</small>
-            </label>
-            <label>
-              <span>Ⅳ · 守卫密令</span>
-              <input id="guard-code" name="guardCode" autocomplete="one-time-code" maxlength="32" />
-              <small>仅在守卫索取密令时铭刻。</small>
-            </label>
+        <section class="status-panel" role="status" aria-labelledby="status-title" aria-live="polite">
+          <div id="prisoner-cell" class="prisoner-cell" aria-label="暗黑之礁囚徒档案">
+            <div class="portrait-frame">
+              <img id="prisoner-avatar" alt="囚徒头像" hidden />
+              <span id="prisoner-seal" class="prisoner-seal" aria-hidden="true">?</span>
+              <span class="cell-bar bar-one" aria-hidden="true"></span>
+              <span class="cell-bar bar-two" aria-hidden="true"></span>
+              <span class="cell-bar bar-three" aria-hidden="true"></span>
+            </div>
+            <span id="haze-mark" class="haze-mark" aria-label="侵蚀雾霭已标记目标" hidden>
+              <img src="../../assets/corrosive-haze.png" alt="" aria-hidden="true" />
+            </span>
+            <strong id="prisoner-name">身份尚未显形</strong>
+            <span id="prisoner-number">NO. ———————————————</span>
           </div>
-
-          <details>
-            <summary>开启下层禁区</summary>
-            <label class="wide-field">
-              <span>Ⅴ · 远视密钥</span>
-              <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
-              <small>用于向 Valve 索取更深层的实时战况，不会显露在观察窗中。</small>
-            </label>
-            <label class="checkbox-field">
-              <input id="notifications" name="notifications" type="checkbox" checked />
-              <span>目标进入战场时敲响 Windows 警钟</span>
-            </label>
-          </details>
-
-          <p id="form-error" class="form-error" role="alert" hidden></p>
-          <div class="actions">
-            <button id="start-button" class="primary" type="submit">命令巡猎</button>
-            <button id="demo-button" class="demo" type="button">召入演示囚徒</button>
-            <button id="stop-button" class="secondary" type="button" disabled>收回雾霭</button>
-            <span>合上铭盘后，斯拉达仍会在系统托盘中巡逻。</span>
+          <div class="status-copy">
+            <div id="status-indicator" class="status-indicator idle" aria-hidden="true"></div>
+            <h2 id="status-title">深渊囚室静默</h2>
+            <p id="status-detail">向斯拉达呈交看守者铭牌与囚徒编号，开启巡猎。</p>
+            <time id="observed-at" datetime=""></time>
           </div>
-        </form>
+        </section>
+        <div class="watch-controls">
+          <button id="stop-button" class="secondary" type="button" disabled>离开观战层并收回雾霭</button>
+          <span>窗口关闭后，斯拉达仍会在系统托盘中巡逻。</span>
+        </div>
       </section>
 
       <footer>

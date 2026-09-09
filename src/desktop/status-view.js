@@ -43,3 +43,7 @@ export function presentStatus(status) {
 export function isTargetMarked(status) {
   return status?.phase === "spectating_unlisted" || status?.phase === "detailed_stats";
 }
+
+export function screenForState(state) {
+  return state?.running ? "watch" : "login";
+}

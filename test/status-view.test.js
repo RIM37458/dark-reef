@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { isTargetMarked, presentStatus } from "../src/desktop/status-view.js";
+import { isTargetMarked, presentStatus, screenForState } from "../src/desktop/status-view.js";
 
 test("presentStatus gives every watcher phase a user-facing state", () => {
   assert.equal(presentStatus(null).title, "深渊囚室静默");
@@ -23,4 +23,11 @@ test("isTargetMarked invokes Corrosive Haze only after a match is found", () => 
   assert.equal(isTargetMarked({ phase: "unavailable" }), false);
   assert.equal(isTargetMarked({ phase: "spectating_unlisted" }), true);
   assert.equal(isTargetMarked({ phase: "detailed_stats" }), true);
+});
+
+test("screenForState separates the entry console from the prison watch floor", () => {
+  assert.equal(screenForState({ running: false }), "login");
+  assert.equal(screenForState({ running: "connecting" }), "watch");
+  assert.equal(screenForState({ running: "demo" }), "watch");
+  assert.equal(screenForState({ running: true }), "watch");
 });

@@ -19,6 +19,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 body {
   min-width: 320px;
   min-height: 100vh;
@@ -166,6 +168,7 @@ h2 {
 }
 
 .prisoner-cell {
+  position: relative;
   display: grid;
   align-content: start;
   justify-items: center;
@@ -187,6 +190,11 @@ h2 {
   box-shadow: inset 0 0 1.4rem #000, 0 0 0 2px #101817;
 }
 
+.prisoner-cell.hero-portrait .portrait-frame {
+  width: 7.5rem;
+  height: 4.25rem;
+}
+
 .portrait-frame img {
   width: 100%;
   height: 100%;
@@ -197,48 +205,47 @@ h2 {
 .haze-mark {
   position: absolute;
   z-index: 4;
-  top: 0.15rem;
+  top: -1rem;
   left: 50%;
-  width: 4.4rem;
-  height: 4.4rem;
-  color: #f33a2f;
-  filter: drop-shadow(0 0 0.32rem #ff372d) drop-shadow(0 0 0.8rem #68110f);
+  width: 2.8rem;
+  height: 2.8rem;
+  color: #9adcf0;
+  filter: drop-shadow(0 0 0.25rem #71bedb) drop-shadow(0 0 0.75rem #7762a7);
   pointer-events: none;
   transform: translateX(-50%);
 }
 
-.haze-mark svg {
+.haze-mark img {
   width: 100%;
   height: 100%;
-  overflow: visible;
-  fill: rgba(112, 12, 15, 0.28);
-  stroke: currentColor;
-  stroke-width: 2;
+  object-fit: contain;
+  filter: none;
+  animation: haze-icon-arrival 0.72s cubic-bezier(0.15, 0.82, 0.2, 1);
 }
 
 .haze-mark::after {
   position: absolute;
-  inset: 0.28rem;
-  border: 1px solid #ff4a3f;
+  inset: 0.18rem;
+  border: 1px solid #9adcf0;
   border-radius: 50%;
   content: "";
   animation: haze-scan 1.9s ease-out infinite;
 }
 
 .prisoner-cell.marked {
-  border-color: #a42e28;
-  box-shadow: inset 0 0 0 3px #130707, inset 0 0 1.5rem #000, 0 0 1.3rem rgba(184, 31, 27, 0.2);
+  border-color: #607f9b;
+  box-shadow: inset 0 0 0 3px #070b13, inset 0 0 1.5rem #000, 0 0 1.3rem rgba(88, 154, 190, 0.22);
 }
 
 .prisoner-cell.marked .portrait-frame {
-  border-color: #b83b32;
-  box-shadow: inset 0 0 1.4rem #000, 0 0 0 2px #28100f, 0 0 1rem rgba(226, 43, 34, 0.32);
+  border-color: #7fa8bd;
+  box-shadow: inset 0 0 1.4rem #000, 0 0 0 2px #111525, 0 0 1rem rgba(101, 180, 216, 0.34);
   animation: marked-impact 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .prisoner-cell.marked .cell-bar {
-  border-left-color: #7a3a32;
-  box-shadow: 2px 0 4px #000, 0 0 0.45rem rgba(220, 46, 37, 0.3);
+  border-left-color: #6d8294;
+  box-shadow: 2px 0 4px #000, 0 0 0.45rem rgba(111, 184, 215, 0.3);
 }
 
 .prisoner-seal {
@@ -336,6 +343,50 @@ footer { color: var(--muted); }
   border: 1px solid #2c4643;
   background: linear-gradient(155deg, rgba(11, 25, 28, 0.98), rgba(4, 11, 13, 0.98));
   box-shadow: inset 0 0 0 3px #061012, 0 0.35rem 1.2rem rgba(0, 0, 0, 0.45);
+}
+
+.screen-index {
+  margin-bottom: 0.35rem !important;
+  color: #678e87 !important;
+  font: 0.62rem/1 Consolas, monospace;
+  letter-spacing: 0.17em;
+}
+
+.watch-screen {
+  margin-top: 0.8rem;
+  padding: 1rem;
+  border: 1px solid #2c4643;
+  background: linear-gradient(155deg, rgba(7, 18, 21, 0.98), rgba(2, 8, 10, 0.98));
+  box-shadow: inset 0 0 0 3px #061012, 0 0.35rem 1.2rem rgba(0, 0, 0, 0.45);
+}
+
+.watch-heading,
+.watch-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.watch-heading {
+  padding: 0.2rem 0.25rem 0.75rem;
+  border-bottom: 1px solid #3d5852;
+}
+
+.watch-heading h2,
+.watch-heading p { margin-bottom: 0; }
+
+.watch-heading > span,
+.watch-controls > span {
+  color: #647d77;
+  font: 0.62rem/1.3 Consolas, monospace;
+  letter-spacing: 0.11em;
+}
+
+.watch-controls {
+  margin-top: 0.8rem;
+  padding: 0.85rem 0.25rem 0.1rem;
+  border-top: 1px solid #263d3a;
 }
 
 .section-heading {
@@ -436,6 +487,12 @@ code { color: #72918a; }
   100% { filter: none; transform: scale(1); }
 }
 
+@keyframes haze-icon-arrival {
+  0% { opacity: 0; transform: translateY(-1.5rem) scale(1.65); }
+  58% { opacity: 1; transform: translateY(0.15rem) scale(0.92); }
+  100% { transform: translateY(0) scale(1); }
+}
+
 @keyframes haze-scan {
   0% { opacity: 0.95; transform: scale(0.35); }
   75%, 100% { opacity: 0; transform: scale(1.45); }
@@ -443,6 +500,7 @@ code { color: #72918a; }
 
 @media (prefers-reduced-motion: reduce) {
   .status-indicator.working,
+  .haze-mark img,
   .haze-mark::after,
   .prisoner-cell.marked .portrait-frame { animation: none; }
 }

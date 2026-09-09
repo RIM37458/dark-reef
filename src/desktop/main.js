@@ -14,6 +14,7 @@ import {
 
 import { startWatcher } from "../app.js";
 import { createDemoSequence } from "../demo-sequence.js";
+import { fitImageWithin } from "../image-fit.js";
 import { loadSteamProfile } from "../steam-profile.js";
 import { createDesktopNotifier } from "../windows-notifier.js";
 import { createDesktopConfig } from "./desktop-config.js";
@@ -167,14 +168,15 @@ async function startMonitoring(input) {
 function startDemo() {
   if (watcher || desktopState.running) return desktopState;
   const revision = ++startRevision;
-  const avatarDataUrl = nativeImage
-    .createFromPath(path.join(assetsDirectory, "demo-prisoner-bot.png"))
-    .resize({ width: 256, height: 256, quality: "best" })
+  const avatar = nativeImage.createFromPath(path.join(assetsDirectory, "demo-prisoner-bot.png"));
+  const avatarDataUrl = avatar
+    .resize({ ...fitImageWithin(avatar.getSize(), 256), quality: "best" })
     .toDataURL();
   const prisoner = Object.freeze({
     steamId64: "DARK-REEF-ESCAPEE-01",
     personaName: "小鱼人 · 斯拉克（演示）",
     avatarDataUrl,
+    portraitShape: "hero",
   });
   const notify = createDesktopNotifier({ NotificationImpl: Notification, onClick: showWindow });
   publish({ running: "demo", prisoner, error: null });

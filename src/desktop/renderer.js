@@ -1,4 +1,4 @@
-import { isTargetMarked, presentStatus } from "./status-view.js";
+import { isTargetMarked, presentStatus, screenForState } from "./status-view.js";
 
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
@@ -16,6 +16,8 @@ const prisonerName = document.querySelector("#prisoner-name");
 const prisonerNumber = document.querySelector("#prisoner-number");
 const prisonerCell = document.querySelector("#prisoner-cell");
 const hazeMark = document.querySelector("#haze-mark");
+const loginScreen = document.querySelector("#login-screen");
+const watchScreen = document.querySelector("#watch-screen");
 const rememberedFields = ["account-name", "friend-steam-id"];
 
 function rememberSettings() {
@@ -35,6 +37,9 @@ function render(state) {
   const running = state.running === true;
   const demoRunning = state.running === "demo";
   const presentation = presentStatus(state.status);
+  const screen = screenForState(state);
+  loginScreen.hidden = screen !== "login";
+  watchScreen.hidden = screen !== "watch";
   runState.textContent = connecting ? "接入中" : running ? "凝视中" : demoRunning ? "演习中" : "沉寂";
   runState.className = `run-state ${connecting || demoRunning ? "working" : running ? "active" : ""}`;
   statusIndicator.className = `status-indicator ${presentation.tone}`;
@@ -47,16 +52,17 @@ function render(state) {
   formError.hidden = !state.error;
   formError.textContent = state.error ?? "";
   startButton.disabled = connecting || running || demoRunning;
-  startButton.textContent = connecting ? "正在下潜…" : "命令巡猎";
+  startButton.textContent = connecting ? "正在下潜…" : "呈交许可并巡猎";
   demoButton.disabled = connecting || running || demoRunning;
-  demoButton.textContent = demoRunning ? "演习进行中…" : "召入演示囚徒";
+  demoButton.textContent = demoRunning ? "小鱼人押送中…" : "押入小鱼人演示囚徒";
   stopButton.disabled = !connecting && !running && !demoRunning;
   for (const element of form.elements) {
-    if (element !== stopButton) element.disabled = connecting || running || demoRunning;
+    element.disabled = connecting || running || demoRunning;
   }
   const prisoner = state.prisoner;
   const marked = isTargetMarked(state.status);
   prisonerCell.classList.toggle("marked", marked);
+  prisonerCell.classList.toggle("hero-portrait", prisoner?.portraitShape === "hero");
   hazeMark.hidden = !marked;
   prisonerAvatar.hidden = !prisoner?.avatarDataUrl;
   prisonerAvatar.src = prisoner?.avatarDataUrl ?? "";
