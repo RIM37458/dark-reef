@@ -1,4 +1,8 @@
-allowBuilds: {}
+allowBuilds:
+  electron: true
+  electron-winstaller: false
+minimumReleaseAgeExclude:
+  - electron@44.3.0
 overrides:
   adm-zip: 0.6.0
   protobufjs: 7.6.6

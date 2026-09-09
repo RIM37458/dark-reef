@@ -25,6 +25,7 @@ test("startWatcher logs in, polls immediately, schedules polling, and shuts down
       steam: {
         accountName: "watcher_bot",
         password: "private-password",
+        guardCode: "12345",
         sessionFile: "./data/session.json",
       },
       friendSteamId64: "76561198000000000",
@@ -57,6 +58,7 @@ test("startWatcher logs in, polls immediately, schedules polling, and shuts down
   assert.deepEqual(loginOptions, {
     accountName: "watcher_bot",
     password: "private-password",
+    guardCode: "12345",
     sessionFile: "./data/session.json",
     waitForGC: true,
   });
@@ -98,5 +100,50 @@ test("startWatcher prefers an explicit refresh token over a password", async () 
 
   assert.equal(loginOptions.refreshToken, "private-token");
   assert.equal("password" in loginOptions, false);
+  await app.stop();
+});
+
+test("startWatcher notifies once per transition into a discovered game", async () => {
+  let scheduledPoll;
+  let status = { phase: "starting" };
+  const results = [
+    { phase: "spectating_unlisted", serverSteamId: "1" },
+    { phase: "detailed_stats", serverSteamId: "1" },
+    { phase: "unavailable" },
+    { phase: "spectating_unlisted", serverSteamId: "2" },
+  ];
+  const notifications = [];
+  const app = await startWatcher(
+    {
+      steam: { accountName: "watcher_bot", password: "secret", sessionFile: "session" },
+      friendSteamId64: "76561198000000000",
+      requestLive: false,
+      pollIntervalMs: 30_000,
+      http: { host: "127.0.0.1", port: 8787 },
+    },
+    {
+      loginDota: async () => ({ live: {}, logout() {} }),
+      monitorFactory: () => ({
+        getStatus: () => status,
+        poll: async () => {
+          status = results.shift();
+          return status;
+        },
+      }),
+      serverFactory: () => ({ listen: async () => {}, close: async () => {} }),
+      notify: (next) => notifications.push(next.serverSteamId),
+      setIntervalFn: (callback) => {
+        scheduledPoll = callback;
+        return 1;
+      },
+      clearIntervalFn: () => {},
+    },
+  );
+
+  await scheduledPoll();
+  await scheduledPoll();
+  await scheduledPoll();
+
+  assert.deepEqual(notifications, ["1", "2"]);
   await app.stop();
 });

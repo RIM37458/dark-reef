@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dota 2 好友比赛监测器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="app-header">
+        <div class="mark" aria-hidden="true">D</div>
+        <div>
+          <p class="eyebrow">DOTA 2 FRIEND WATCHER</p>
+          <h1>好友比赛监测器</h1>
+        </div>
+        <span id="run-state" class="run-state">未运行</span>
+      </header>
+
+      <section class="status-panel" role="status" aria-labelledby="status-title" aria-live="polite">
+        <div id="status-indicator" class="status-indicator idle" aria-hidden="true"></div>
+        <div>
+          <h2 id="status-title">尚未开始监控</h2>
+          <p id="status-detail">填写账号和好友信息后开始监控。</p>
+          <time id="observed-at" datetime=""></time>
+        </div>
+      </section>
+
+      <section class="configuration" aria-labelledby="configuration-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="configuration-title">监控设置</h2>
+            <p>无需打开 Dota 2 客户端。首次登录可能需要 Steam Guard 验证码。</p>
+          </div>
+        </div>
+
+        <form id="watcher-form">
+          <div class="field-grid">
+            <label>
+              <span>Steam 登录名</span>
+              <input id="account-name" name="accountName" autocomplete="username" required maxlength="128" />
+            </label>
+            <label>
+              <span>好友 SteamID64</span>
+              <input
+                id="friend-steam-id"
+                name="friendSteamId64"
+                inputmode="numeric"
+                pattern="7656119[0-9]{10}"
+                placeholder="7656119…（17 位）"
+                required
+                maxlength="17"
+              />
+            </label>
+            <label>
+              <span>Steam 密码</span>
+              <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" />
+              <small>会话建立后可留空；密码不会保存。</small>
+            </label>
+            <label>
+              <span>Steam Guard 验证码</span>
+              <input id="guard-code" name="guardCode" autocomplete="one-time-code" maxlength="32" />
+              <small>只有 Steam 要求验证时才填写。</small>
+            </label>
+          </div>
+
+          <details>
+            <summary>高级设置</summary>
+            <label class="wide-field">
+              <span>Steam Web API Key（可选）</span>
+              <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
+              <small>仅用于尝试补充 Valve 实时统计，不会显示在窗口中。</small>
+            </label>
+            <label class="checkbox-field">
+              <input id="notifications" name="notifications" type="checkbox" checked />
+              <span>好友开局时显示 Windows 桌面通知</span>
+            </label>
+          </details>
+
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+          <div class="actions">
+            <button id="start-button" class="primary" type="submit">开始监控</button>
+            <button id="stop-button" class="secondary" type="button" disabled>停止监控</button>
+            <span>关闭窗口后仍会在系统托盘继续运行。</span>
+          </div>
+        </form>
+      </section>
+
+      <footer>
+        <span>本地状态接口</span>
+        <code>http://127.0.0.1:8787/status</code>
+      </footer>
+    </main>
+    <script type="module" src="./renderer.js"></script>
+  </body>
+</html>

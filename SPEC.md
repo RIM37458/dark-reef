@@ -2,7 +2,7 @@
 
 ## Objective
 
-Run as a headless local service, log a dedicated Steam account into the Dota 2 Game Coordinator, request delayed spectating for one Steam friend, and expose the latest discovery and optional Valve realtime-stat result as JSON.
+Run as a Windows desktop application, log a Steam account into the Dota 2 Game Coordinator, request delayed spectating for one Steam friend, show the current state in a main window, expose the latest discovery and optional Valve realtime-stat result as JSON, and notify the signed-in Windows desktop when a game is first discovered.
 
 The service must be honest about Valve's boundary: an ordinary public match may yield a spectate server id but no detailed live scoreboard. That state is reported as `spectating_unlisted`, not treated as an application failure.
 
@@ -24,6 +24,7 @@ The service must be honest about Valve's boundary: an ordinary public match may 
 ## Project Structure
 
 - `src/` — configuration, monitor, Valve API adapter, HTTP server, entry point
+- `src/desktop/` — sandboxed renderer, narrow preload bridge, and Electron lifecycle
 - `test/` — unit and local integration tests
 - `tasks/` — implementation plan and checklist
 - `data/` — ignored local Steam session data
@@ -50,15 +51,20 @@ Comments explain only non-obvious protocol reasons.
 ## Boundaries
 
 - Always: validate environment input, bind HTTP to loopback, redact credentials, time out network calls, report GC limitations explicitly.
-- Ask first: add persistent match storage, public network binding, notifications, or additional third-party services.
+- Ask first: add persistent match storage, public network binding, or additional third-party services.
 - Never: commit Steam credentials/tokens, bypass fog-of-war, read Dota process memory, or claim full ordinary-pub telemetry when Valve does not expose it.
 
 ## Success Criteria
 
 - Starts without the Dota 2 desktop client.
+- Ships as an installable Windows `.exe` and a portable Windows `.exe`.
+- Accepts account, target friend, optional password/Steam Guard code, and optional Web API key in the main window.
 - Logs in through a session file/refresh token or first-run password flow.
 - Requests delayed friend spectating (`live: false` by default).
 - Exposes `GET /health` and `GET /status` on `127.0.0.1`.
+- Shows one Windows desktop notification when monitoring changes from no discovered game to a discovered game; repeated polls do not repeat it.
+- Keeps monitoring from the notification-area tray when the main window is closed.
+- Allows desktop notifications to be disabled through validated configuration.
 - Optionally calls Valve `GetRealtimeStats` when a Web API key is configured.
 - Distinguishes offline, unavailable, server-id-only, detailed-stats, authentication, and transient failures.
 - Tests and static checks pass without Steam credentials.

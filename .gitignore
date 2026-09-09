@@ -1,4 +1,13 @@
 node_modules/
+.pnpm-store/
+.electron-cache/
+.electron-builder-cache/
+.local-app-data/
+.electron-user-data/
+.packaged-user-data/
+.tmp/
+dist/
+release/
 data/
 .env
 .env.local

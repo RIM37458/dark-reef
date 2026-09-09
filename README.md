@@ -1,6 +1,8 @@
 # Dota 2 好友比赛监测器
 
-这是一个无需启动 Dota 2 桌面客户端的本地后台服务。它使用专用 Steam 账号连接 Dota 2 Game Coordinator，尝试观战指定好友，并把当前状态输出为 JSON。
+这是一个带主窗口和系统托盘的 Windows 应用程序，不是网页。它无需启动 Dota 2 客户端，使用 Steam 账号连接 Dota 2 Game Coordinator，尝试观战指定好友，并在好友开局时显示 Windows 桌面通知。
+
+窗口关闭后应用会缩到系统托盘并继续监控。应用同时保留只允许本机访问的 JSON 状态接口。
 
 ## 能得到什么
 
@@ -12,6 +14,21 @@
 普通路人局通常不在 SourceTV 热门列表中。这时服务会保留服务器 ID，并返回 `spectating_unlisted`；这不是程序故障，而是 Valve 当前的数据边界。
 
 ## 准备工作
+
+### 直接使用 EXE
+
+推荐运行 `Dota2-Friend-Watcher-0.1.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Friend-Watcher-0.1.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
+
+打开应用后填写：
+
+1. Steam 登录名。
+2. 目标好友的 17 位 SteamID64。
+3. 首次登录所需的 Steam 密码；应用不会保存密码。
+4. 如果提示需要验证，填入 Steam Guard 验证码并重新点击“开始监控”。
+
+成功登录后，刷新令牌保存在 Windows 当前用户的应用数据目录。以后通常可以不填密码直接开始监控。好友必须能被该账号通过 Steam 好友关系观战；好友隐私、比赛观战设置和 Valve 限制仍然有效。
+
+### 从源码运行
 
 1. 安装 Node.js 24 或更新版本，以及 pnpm 11。
 2. 准备一个专用 Steam 小号，并让它与目标玩家成为 Steam 好友。
@@ -39,8 +56,16 @@
 
 ## 运行
 
+桌面应用：
+
 ```powershell
 pnpm start
+```
+
+仅运行无窗口后台服务：
+
+```powershell
+pnpm run start:service
 ```
 
 查询状态：
@@ -51,6 +76,8 @@ Invoke-RestMethod http://127.0.0.1:8787/status
 ```
 
 服务只监听 `127.0.0.1`，不会直接暴露到局域网或公网。
+
+桌面通知只在状态从“未发现比赛”变为“发现比赛”时发送一次。持续处于同一场比赛不会每 30 秒重复提醒；比赛结束后再次开局会再次提醒。可在窗口高级设置中关闭通知。
 
 ## 状态说明
 
@@ -80,17 +107,21 @@ https://api.steampowered.com/IDOTA2MatchStats_570/GetRealtimeStats/v1/
 pnpm test
 pnpm run check
 pnpm audit
+pnpm run build:win
 ```
 
 测试不需要真实 Steam 账号，也不会访问 Steam。
 
-锁文件通过 pnpm override 将 `steam-user` 的传递依赖固定在已修复安全公告的 `adm-zip` 0.6.0 和 `protobufjs` 7.6.6；升级依赖后应重新执行审计和测试。
+锁文件通过 pnpm override 将 `steam-user` 的传递依赖固定在 `adm-zip` 0.6.0 和已修复旧公告的 `protobufjs` 7.6.6。当前 `pnpm audit` 会报告 `adm-zip` 的 [GHSA-vwc7-r8mq-g2x9](https://github.com/advisories/GHSA-vwc7-r8mq-g2x9)，且上游尚未发布修复版；该公告针对写入文件系统的解压接口，而 `steam-user` 在本项目调用路径中只用它从内存读取单个压缩条目，不会写入解压目录。升级依赖后仍应重新执行审计和测试。
 
 ## 数据源依据
 
 - dotakit 的 `spectateFriend`、SourceTV 与登录接口：https://github.com/beekamai/dotakit#readme
 - Steam 登录及刷新令牌行为：https://github.com/DoctorMcKay/node-steam-user
 - Valve Dota 2 观战 protobuf：https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/Protobufs/dota_gcmessages_client_watch.proto
-- Node.js 环境文件参数：https://nodejs.org/api/cli.html#--env-file-if-existsfile
+- [Electron BrowserWindow 与渲染沙箱](https://www.electronjs.org/docs/latest/api/browser-window)
+- [Electron 原生桌面通知及 Windows 要求](https://www.electronjs.org/docs/latest/tutorial/notifications)
+- [electron-builder Windows 安装版与便携版目标](https://www.electron.build/docs/win/)
+- [Node.js 环境文件参数](https://nodejs.org/api/cli.html#--env-file-if-existsfile)
 
 本项目与 Valve Corporation 无关联。

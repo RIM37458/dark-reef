@@ -33,12 +33,18 @@ export function parseConfig(env) {
     steam: Object.freeze({
       accountName: required(env, "STEAM_ACCOUNT"),
       password: env.STEAM_PASSWORD?.trim() || undefined,
+      guardCode: env.STEAM_GUARD_CODE?.trim() || undefined,
       refreshToken: env.STEAM_REFRESH_TOKEN?.trim() || undefined,
       sessionFile: env.STEAM_SESSION_FILE?.trim() || "./data/session.json",
     }),
     friendSteamId64,
     steamWebApiKey: env.STEAM_WEB_API_KEY?.trim() || undefined,
     requestLive: boolean(env.REQUEST_LIVE, "REQUEST_LIVE", false),
+    windowsNotifications: boolean(
+      env.WINDOWS_NOTIFICATIONS,
+      "WINDOWS_NOTIFICATIONS",
+      true,
+    ),
     pollIntervalMs: boundedInteger(
       env.POLL_INTERVAL_MS,
       "POLL_INTERVAL_MS",
