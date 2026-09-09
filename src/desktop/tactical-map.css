@@ -129,29 +129,9 @@
 .prisoner-cell.released .portrait-frame { border-color: #4f8584; box-shadow: 0 0 1.2rem rgba(65, 160, 170, 0.28); }
 .prisoner-cell.released::after {
   color: #70aaa6;
-  content: "牢门解除 · 雾霭追踪中";
+  content: "牢门解除 · 目标已进入战场";
   font: 0.55rem/1.2 Consolas, monospace;
   letter-spacing: 0.08em;
-}
-
-.haze-mark::before {
-  position: absolute;
-  top: 75%;
-  width: 0.35rem;
-  height: 0.75rem;
-  border-radius: 50% 50% 60% 60%;
-  background: #6fb7c1;
-  box-shadow: 1.4rem -0.1rem 0 -0.04rem #6fb7c1;
-  content: "";
-  animation: water-drip 1.6s ease-in infinite;
-}
-
-.haze-mark::before { left: 28%; }
-
-@keyframes water-drip {
-  0% { opacity: 0; transform: translateY(-0.2rem) scale(0.6); }
-  25% { opacity: 0.85; }
-  100% { opacity: 0; transform: translateY(1.3rem) scale(0.9); }
 }
 
 @media (max-width: 700px) {
@@ -163,5 +143,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .map-hero { transition: none; }
-  .haze-mark::before { animation: none; }
 }

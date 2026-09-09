@@ -202,52 +202,6 @@ h2 {
   filter: saturate(0.55) contrast(1.18) sepia(0.12);
 }
 
-.haze-mark {
-  position: absolute;
-  z-index: 4;
-  top: -1rem;
-  left: 50%;
-  width: 2.8rem;
-  height: 2.8rem;
-  color: #9adcf0;
-  filter: drop-shadow(0 0 0.25rem #71bedb) drop-shadow(0 0 0.75rem #7762a7);
-  pointer-events: none;
-  transform: translateX(-50%);
-}
-
-.haze-mark img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: none;
-  animation: haze-icon-arrival 0.72s cubic-bezier(0.15, 0.82, 0.2, 1);
-}
-
-.haze-mark::after {
-  position: absolute;
-  inset: 0.18rem;
-  border: 1px solid #9adcf0;
-  border-radius: 50%;
-  content: "";
-  animation: haze-scan 1.9s ease-out infinite;
-}
-
-.prisoner-cell.marked {
-  border-color: #607f9b;
-  box-shadow: inset 0 0 0 3px #070b13, inset 0 0 1.5rem #000, 0 0 1.3rem rgba(88, 154, 190, 0.22);
-}
-
-.prisoner-cell.marked .portrait-frame {
-  border-color: #7fa8bd;
-  box-shadow: inset 0 0 1.4rem #000, 0 0 0 2px #111525, 0 0 1rem rgba(101, 180, 216, 0.34);
-  animation: marked-impact 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.prisoner-cell.marked .cell-bar {
-  border-left-color: #6d8294;
-  box-shadow: 2px 0 4px #000, 0 0 0.45rem rgba(111, 184, 215, 0.3);
-}
-
 .prisoner-seal {
   display: grid;
   height: 100%;
@@ -659,28 +613,8 @@ code { color: #72918a; }
 
 @keyframes pulse { 50% { opacity: 0.42; box-shadow: 0 0 1.2rem currentColor; } }
 
-@keyframes marked-impact {
-  0% { filter: brightness(2.5); transform: scale(1.08); }
-  45% { transform: scale(0.97); }
-  100% { filter: none; transform: scale(1); }
-}
-
-@keyframes haze-icon-arrival {
-  0% { opacity: 0; transform: translateY(-1.5rem) scale(1.65); }
-  58% { opacity: 1; transform: translateY(0.15rem) scale(0.92); }
-  100% { transform: translateY(0) scale(1); }
-}
-
-@keyframes haze-scan {
-  0% { opacity: 0.95; transform: scale(0.35); }
-  75%, 100% { opacity: 0; transform: scale(1.45); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .status-indicator.working,
-  .haze-mark img,
-  .haze-mark::after,
-  .prisoner-cell.marked .portrait-frame { animation: none; }
+  .status-indicator.working { animation: none; }
 }
 
 @media (max-width: 700px) {

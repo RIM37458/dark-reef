@@ -22,7 +22,6 @@ const prisonerSeal = document.querySelector("#prisoner-seal");
 const prisonerName = document.querySelector("#prisoner-name");
 const prisonerNumber = document.querySelector("#prisoner-number");
 const prisonerCell = document.querySelector("#prisoner-cell");
-const hazeMark = document.querySelector("#haze-mark");
 const loginScreen = document.querySelector("#login-screen");
 const watchScreen = document.querySelector("#watch-screen");
 const matchPanel = document.querySelector("#match-panel");
@@ -156,10 +155,8 @@ function render(state) {
   }
   const prisoner = state.prisoner;
   const marked = isTargetMarked(state.status);
-  prisonerCell.classList.toggle("marked", marked);
   prisonerCell.classList.toggle("released", marked);
   prisonerCell.classList.toggle("hero-portrait", prisoner?.portraitShape === "hero");
-  hazeMark.hidden = !marked;
   prisonerAvatar.hidden = !prisoner?.avatarDataUrl;
   prisonerAvatar.src = prisoner?.avatarDataUrl ?? "";
   prisonerAvatar.alt = prisoner?.personaName ? `${prisoner.personaName} 的头像` : "囚徒头像";
