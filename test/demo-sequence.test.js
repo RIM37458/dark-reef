@@ -36,6 +36,9 @@ test("createDemoSequence stages a patrol before marking the bot prisoner", () =>
   assert.equal(visibleMatch.buildings.length, 12);
   assert.ok(visibleMatch.players.every(({ x, y }) => Number.isFinite(x) && Number.isFinite(y)));
   const firstMatch = toPublicMatch(frames.at(-3).status.game, "76561197960265735");
+  const middleMatch = toPublicMatch(frames.at(-2).status.game, "76561197960265735");
+  assert.equal(middleMatch.target.respawnTime, 18);
+  assert.equal(visibleMatch.target.respawnTime, 0);
   assert.notDeepEqual(
     visibleMatch.players.map(({ x, y }) => [x, y]),
     firstMatch.players.map(({ x, y }) => [x, y]),

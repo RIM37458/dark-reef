@@ -42,7 +42,7 @@ const DEMO_BUILDINGS = Object.freeze([
   { team: 3, type: 1, lane: 3, tier: 2, x: 6100, y: 1800, destroyed: false },
 ]);
 
-function demoPlayer(player, position, deaths, items) {
+function demoPlayer(player, position, step, deaths, items) {
   const target = player.accountId === 7;
   return {
     ...player,
@@ -55,14 +55,14 @@ function demoPlayer(player, position, deaths, items) {
     lastHits: target ? 221 : 154,
     denies: target ? 8 : 4,
     netWorth: target ? 17_320 : 13_200,
-    respawnTime: target && deaths === 4 ? 18 : 0,
+    respawnTime: target && step === 1 ? 18 : 0,
     items: target ? items : [],
   };
 }
 
 function demoGame({ step, gameTime, radiantScore, direScore, radiantLead, spectators, deaths, items }) {
   const players = DEMO_ROSTER.map((player, index) => (
-    demoPlayer(player, DEMO_POSITIONS[step][index], deaths, items)
+    demoPlayer(player, DEMO_POSITIONS[step][index], step, deaths, items)
   ));
   return {
     match: { matchId: "8988000007", gameTime },

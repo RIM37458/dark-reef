@@ -5,6 +5,7 @@ import {
   screenForState,
 } from "./status-view.js";
 import { describeBattleChanges } from "../battle-feed.js";
+import { renderTacticalMap } from "./tactical-map-view.js";
 
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
@@ -156,6 +157,7 @@ function render(state) {
   const prisoner = state.prisoner;
   const marked = isTargetMarked(state.status);
   prisonerCell.classList.toggle("marked", marked);
+  prisonerCell.classList.toggle("released", marked);
   prisonerCell.classList.toggle("hero-portrait", prisoner?.portraitShape === "hero");
   hazeMark.hidden = !marked;
   prisonerAvatar.hidden = !prisoner?.avatarDataUrl;
@@ -174,6 +176,7 @@ function render(state) {
     }
   }
   renderTarget(liveMatch?.target);
+  renderTacticalMap(state.status?.match, { fast: demoRunning });
   renderBattleFeed(state.status?.match, state.status?.observedAt);
 }
 
