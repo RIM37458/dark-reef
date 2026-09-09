@@ -61,8 +61,8 @@ test("createDesktopNotifier shows a native notification and restores the window"
     true,
   );
   assert.deepEqual(options, {
-    title: "Dota 2 好友已开局",
-    body: "已发现可观战比赛（服务器 123456）。",
+    title: "侵蚀雾霭：目标已显形",
+    body: "斯拉达已为囚徒点灯，战场进入监视（服务器 123456）。",
   });
   assert.equal(shown, true);
   clicked();

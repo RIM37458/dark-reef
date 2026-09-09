@@ -26,9 +26,11 @@ export async function startWatcher(
     clearIntervalFn = globalThis.clearInterval,
     notify = () => false,
     onStatus = () => {},
+    onConnected = () => {},
   },
 ) {
   const bot = await loginDota(buildLoginOptions(config.steam));
+  onConnected(bot);
   const statsClient = config.steamWebApiKey
     ? statsClientFactory({ apiKey: config.steamWebApiKey })
     : undefined;

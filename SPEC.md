@@ -1,4 +1,4 @@
-# Spec: Dota 2 Friend Watcher
+# Spec: Dark Reef Monitor
 
 ## Objective
 

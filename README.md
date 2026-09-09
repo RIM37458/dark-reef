@@ -1,4 +1,4 @@
-# Dota 2 好友比赛监测器
+# 暗黑之礁 · 监控室
 
 这是一个带主窗口和系统托盘的 Windows 应用程序，不是网页。它无需启动 Dota 2 客户端，使用 Steam 账号连接 Dota 2 Game Coordinator，尝试观战指定好友，并在好友开局时显示 Windows 桌面通知。
 
@@ -7,6 +7,7 @@
 ## 能得到什么
 
 - 好友当前是否存在可观战比赛
+- 登录后从 Steam 好友资料中取得头像与昵称，并显示在铁栅囚室中
 - 观战请求的结果和 `serverSteamId`
 - 如果比赛进入 Valve SourceTV 热门列表：比赛 ID、时间、比分、经济领先等快照
 - 如果配置 Steam Web API Key 且 Valve 为该服务器提供统计：`GetRealtimeStats` 的完整 JSON
@@ -17,16 +18,16 @@
 
 ### 直接使用 EXE
 
-推荐运行 `Dota2-Friend-Watcher-0.1.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Friend-Watcher-0.1.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
+推荐运行 `Dota2-Dark-Reef-Monitor-0.2.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式，Windows 通知支持最可靠。也可以运行 `Dota2-Dark-Reef-Monitor-0.2.0-x64-Portable.exe`，它不需要安装，但部分 Windows 通知设置可能会抑制便携应用的通知。
 
 打开应用后填写：
 
 1. Steam 登录名。
 2. 目标好友的 17 位 SteamID64。
 3. 首次登录所需的 Steam 密码；应用不会保存密码。
-4. 如果提示需要验证，填入 Steam Guard 验证码并重新点击“开始监控”。
+4. 如果提示需要验证，填入 Steam Guard 验证码并重新点击“开启监视”。
 
-成功登录后，刷新令牌保存在 Windows 当前用户的应用数据目录。以后通常可以不填密码直接开始监控。好友必须能被该账号通过 Steam 好友关系观战；好友隐私、比赛观战设置和 Valve 限制仍然有效。
+成功登录后，刷新令牌保存在 Windows 当前用户的应用数据目录。以后通常可以不填密码直接“命令巡猎”。好友必须能被该账号通过 Steam 好友关系观战；好友隐私、比赛观战设置和 Valve 限制仍然有效。
 
 ### 从源码运行
 

@@ -6,6 +6,7 @@ import { startWatcher } from "../src/app.js";
 test("startWatcher logs in, polls immediately, schedules polling, and shuts down", async () => {
   const events = [];
   let loginOptions;
+  let connectedBot;
   const bot = {
     live: {},
     logout: () => events.push("logout"),
@@ -38,6 +39,9 @@ test("startWatcher logs in, polls immediately, schedules polling, and shuts down
         loginOptions = options;
         return bot;
       },
+      onConnected: (value) => {
+        connectedBot = value;
+      },
       monitorFactory: () => monitor,
       serverFactory: ({ getStatus }) => {
         assert.deepEqual(getStatus(), { phase: "starting" });
@@ -62,6 +66,7 @@ test("startWatcher logs in, polls immediately, schedules polling, and shuts down
     sessionFile: "./data/session.json",
     waitForGC: true,
   });
+  assert.equal(connectedBot, bot);
   assert.deepEqual(events.slice(0, 2), [
     ["listen", { host: "127.0.0.1", port: 8787 }],
     "poll",

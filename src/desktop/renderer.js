@@ -1,4 +1,4 @@
-import { presentStatus } from "./status-view.js";
+import { isTargetMarked, presentStatus } from "./status-view.js";
 
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
@@ -9,6 +9,12 @@ const statusIndicator = document.querySelector("#status-indicator");
 const statusTitle = document.querySelector("#status-title");
 const statusDetail = document.querySelector("#status-detail");
 const observedAt = document.querySelector("#observed-at");
+const prisonerAvatar = document.querySelector("#prisoner-avatar");
+const prisonerSeal = document.querySelector("#prisoner-seal");
+const prisonerName = document.querySelector("#prisoner-name");
+const prisonerNumber = document.querySelector("#prisoner-number");
+const prisonerCell = document.querySelector("#prisoner-cell");
+const hazeMark = document.querySelector("#haze-mark");
 const rememberedFields = ["account-name", "friend-steam-id"];
 
 function rememberSettings() {
@@ -27,23 +33,35 @@ function render(state) {
   const connecting = state.running === "connecting";
   const running = state.running === true;
   const presentation = presentStatus(state.status);
-  runState.textContent = connecting ? "连接中" : running ? "监控中" : "未运行";
+  runState.textContent = connecting ? "接入中" : running ? "凝视中" : "沉寂";
   runState.className = `run-state ${connecting ? "working" : running ? "active" : ""}`;
   statusIndicator.className = `status-indicator ${presentation.tone}`;
   statusTitle.textContent = presentation.title;
   statusDetail.textContent = presentation.detail;
   observedAt.textContent = state.status?.observedAt
-    ? `最近检查：${new Date(state.status.observedAt).toLocaleString()}`
+    ? `最近一次回响 · ${new Date(state.status.observedAt).toLocaleString()}`
     : "";
   observedAt.dateTime = state.status?.observedAt ?? "";
   formError.hidden = !state.error;
   formError.textContent = state.error ?? "";
   startButton.disabled = connecting || running;
-  startButton.textContent = connecting ? "正在连接…" : "开始监控";
+  startButton.textContent = connecting ? "正在下潜…" : "命令巡猎";
   stopButton.disabled = !connecting && !running;
   for (const element of form.elements) {
     if (element !== stopButton) element.disabled = connecting || running;
   }
+  const prisoner = state.prisoner;
+  const marked = isTargetMarked(state.status);
+  prisonerCell.classList.toggle("marked", marked);
+  hazeMark.hidden = !marked;
+  prisonerAvatar.hidden = !prisoner?.avatarDataUrl;
+  prisonerAvatar.src = prisoner?.avatarDataUrl ?? "";
+  prisonerAvatar.alt = prisoner?.personaName ? `${prisoner.personaName} 的头像` : "囚徒头像";
+  prisonerSeal.hidden = Boolean(prisoner?.avatarDataUrl);
+  prisonerName.textContent = prisoner?.personaName ?? "身份尚未显形";
+  prisonerNumber.textContent = prisoner?.steamId64
+    ? `NO. ${prisoner.steamId64}`
+    : "NO. ———————————————";
 }
 
 form.addEventListener("submit", async (event) => {

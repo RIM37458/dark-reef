@@ -12,8 +12,8 @@ export function createDesktopNotifier({ NotificationImpl, onClick = () => {} }) 
       ? `（服务器 ${status.serverSteamId}）`
       : "";
     const notification = new NotificationImpl({
-      title: "Dota 2 好友已开局",
-      body: `已发现可观战比赛${server}。`,
+      title: "侵蚀雾霭：目标已显形",
+      body: `斯拉达已为囚徒点灯，战场进入监视${server}。`,
     });
     notification.on("click", onClick);
     notification.show();

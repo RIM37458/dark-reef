@@ -7,7 +7,7 @@
       content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dota 2 好友比赛监测器</title>
+    <title>暗黑之礁 · 监控室</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -15,17 +15,34 @@
       <header class="app-header">
         <div class="mark" aria-hidden="true">D</div>
         <div>
-          <p class="eyebrow">DOTA 2 FRIEND WATCHER</p>
-          <h1>好友比赛监测器</h1>
+          <p class="eyebrow">SLITHEREEN GUARD // DARK REEF</p>
+          <h1>暗黑之礁 · 监控室</h1>
         </div>
-        <span id="run-state" class="run-state">未运行</span>
+        <span id="run-state" class="run-state">沉寂</span>
       </header>
 
       <section class="status-panel" role="status" aria-labelledby="status-title" aria-live="polite">
-        <div id="status-indicator" class="status-indicator idle" aria-hidden="true"></div>
-        <div>
-          <h2 id="status-title">尚未开始监控</h2>
-          <p id="status-detail">填写账号和好友信息后开始监控。</p>
+        <div id="prisoner-cell" class="prisoner-cell" aria-label="暗黑之礁囚徒档案">
+          <div class="portrait-frame">
+            <img id="prisoner-avatar" alt="囚徒头像" hidden />
+            <span id="prisoner-seal" class="prisoner-seal" aria-hidden="true">?</span>
+            <span id="haze-mark" class="haze-mark" aria-label="侵蚀雾霭已标记目标" hidden>
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M32 5 39 21 56 16 45 32 57 46 39 43 32 59 25 43 7 46 19 32 8 16 25 21Z" />
+                <circle cx="32" cy="32" r="9" />
+              </svg>
+            </span>
+            <span class="cell-bar bar-one" aria-hidden="true"></span>
+            <span class="cell-bar bar-two" aria-hidden="true"></span>
+            <span class="cell-bar bar-three" aria-hidden="true"></span>
+          </div>
+          <strong id="prisoner-name">身份尚未显形</strong>
+          <span id="prisoner-number">NO. ———————————————</span>
+        </div>
+        <div class="status-copy">
+          <div id="status-indicator" class="status-indicator idle" aria-hidden="true"></div>
+          <h2 id="status-title">深渊囚室静默</h2>
+          <p id="status-detail">向斯拉达呈交看守者铭牌与囚徒编号，开启巡猎。</p>
           <time id="observed-at" datetime=""></time>
         </div>
       </section>
@@ -33,65 +50,65 @@
       <section class="configuration" aria-labelledby="configuration-title">
         <div class="section-heading">
           <div>
-            <h2 id="configuration-title">监控设置</h2>
-            <p>无需打开 Dota 2 客户端。首次登录可能需要 Steam Guard 验证码。</p>
+            <h2 id="configuration-title">斯拉达的追猎铭盘</h2>
+            <p>向深海卫士呈交身份。无需唤醒地表客户端；斯拉达会独自在暗流中巡逻。</p>
           </div>
         </div>
 
         <form id="watcher-form">
           <div class="field-grid">
             <label>
-              <span>Steam 登录名</span>
-              <input id="account-name" name="accountName" autocomplete="username" required maxlength="128" />
+              <span>Ⅰ · 看守者铭牌</span>
+              <input id="account-name" name="accountName" autocomplete="username" placeholder="STEAM ACCOUNT" required maxlength="128" />
             </label>
             <label>
-              <span>好友 SteamID64</span>
+              <span>Ⅱ · 囚徒编号</span>
               <input
                 id="friend-steam-id"
                 name="friendSteamId64"
                 inputmode="numeric"
                 pattern="7656119[0-9]{10}"
-                placeholder="7656119…（17 位）"
+                placeholder="STEAMID64 · 17 DIGITS"
                 required
                 maxlength="17"
               />
             </label>
             <label>
-              <span>Steam 密码</span>
+              <span>Ⅲ · 通行血印</span>
               <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" />
-              <small>会话建立后可留空；密码不会保存。</small>
+              <small>契约建立后可留空；密钥不会被封存。</small>
             </label>
             <label>
-              <span>Steam Guard 验证码</span>
+              <span>Ⅳ · 守卫密令</span>
               <input id="guard-code" name="guardCode" autocomplete="one-time-code" maxlength="32" />
-              <small>只有 Steam 要求验证时才填写。</small>
+              <small>仅在守卫索取密令时铭刻。</small>
             </label>
           </div>
 
           <details>
-            <summary>高级设置</summary>
+            <summary>开启下层禁区</summary>
             <label class="wide-field">
-              <span>Steam Web API Key（可选）</span>
+              <span>Ⅴ · 远视密钥</span>
               <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
-              <small>仅用于尝试补充 Valve 实时统计，不会显示在窗口中。</small>
+              <small>用于向 Valve 索取更深层的实时战况，不会显露在观察窗中。</small>
             </label>
             <label class="checkbox-field">
               <input id="notifications" name="notifications" type="checkbox" checked />
-              <span>好友开局时显示 Windows 桌面通知</span>
+              <span>目标进入战场时敲响 Windows 警钟</span>
             </label>
           </details>
 
           <p id="form-error" class="form-error" role="alert" hidden></p>
           <div class="actions">
-            <button id="start-button" class="primary" type="submit">开始监控</button>
-            <button id="stop-button" class="secondary" type="button" disabled>停止监控</button>
-            <span>关闭窗口后仍会在系统托盘继续运行。</span>
+            <button id="start-button" class="primary" type="submit">命令巡猎</button>
+            <button id="stop-button" class="secondary" type="button" disabled>收回雾霭</button>
+            <span>合上铭盘后，斯拉达仍会在系统托盘中巡逻。</span>
           </div>
         </form>
       </section>
 
       <footer>
-        <span>本地状态接口</span>
+        <span>斯拉达的远视水道</span>
         <code>http://127.0.0.1:8787/status</code>
       </footer>
     </main>

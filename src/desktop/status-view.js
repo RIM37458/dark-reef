@@ -1,23 +1,23 @@
 const PRESENTATIONS = Object.freeze({
   starting: Object.freeze({
     tone: "working",
-    title: "正在连接",
-    detail: "正在登录 Steam 并连接 Dota 2 协调服务器。",
+    title: "斯拉达正在巡视暗黑之礁",
+    detail: "深海卫士正在核验看守者铭牌，并聆听战场的回响。",
   }),
   unavailable: Object.freeze({
     tone: "idle",
-    title: "等待好友开局",
-    detail: "当前没有发现可观战比赛，程序会自动继续检查。",
+    title: "深海卫士仍在巡猎",
+    detail: "目标尚未踏入战场；斯拉达的监视之眼不会移开。",
   }),
   detailed_stats: Object.freeze({
     tone: "success",
-    title: "好友正在比赛",
-    detail: "已发现比赛，并取得 Valve 提供的实时比赛数据。",
+    title: "侵蚀雾霭已锁定目标",
+    detail: "斯拉达已为囚徒点灯，战场在深海监视之下显形。",
   }),
   transient_error: Object.freeze({
     tone: "error",
-    title: "暂时无法查询",
-    detail: "Steam 或 Valve 暂时没有响应，程序会在下一轮自动重试。",
+    title: "深海水道遭到扰动",
+    detail: "战场回响暂时沉没；斯拉达将在下一轮巡逻中再次搜寻。",
   }),
 });
 
@@ -29,13 +29,17 @@ export function presentStatus(status) {
       : "未知";
     return {
       tone: "success",
-      title: "好友正在比赛",
-      detail: `已发现可观战比赛，服务器 ID：${serverId}。普通路人局可能没有详细比分。`,
+      title: "侵蚀雾霭已锁定目标",
+      detail: `斯拉达已为囚徒点灯，战场编号：${serverId}。暗流遮住了更深层的战况。`,
     };
   }
   return PRESENTATIONS[status.phase] ?? {
     tone: "idle",
-    title: "尚未开始监控",
-    detail: "填写账号和好友信息后开始监控。",
+    title: "深渊囚室静默",
+    detail: "向斯拉达呈交看守者铭牌与囚徒编号，开启巡猎。",
   };
+}
+
+export function isTargetMarked(status) {
+  return status?.phase === "spectating_unlisted" || status?.phase === "detailed_stats";
 }
