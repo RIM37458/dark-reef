@@ -4,7 +4,7 @@
 
 窗口关闭后应用会缩到系统托盘并继续监控。应用同时保留只允许本机访问的 JSON 状态接口。
 
-应用将入礁登录台与牢房观战层分开。点击登录台上的“押入小鱼人演示囚徒”，可以在不登录 Steam 的情况下，使用小鱼人斯拉克的英雄头像演示斯拉达巡猎、牢房点灯动画和模拟战况。演示不会读取或改动真实账号信息。
+应用将入礁登录台与牢房观战层分开。点击登录台上的“押入小鱼人演示囚徒”，可以在不登录 Steam 的情况下，使用小鱼人斯拉克的英雄头像演示斯拉达巡猎、牢门开启和模拟战况。演示不会读取或改动真实账号信息。
 
 ## 能得到什么
 
@@ -14,7 +14,7 @@
 - 如果比赛进入 Valve SourceTV 热门列表：比赛 ID、时间、比分、经济领先等快照
 - 如果配置 Steam Web API Key 且 Valve 为该服务器提供统计：在观战层显示 `GetRealtimeStats` 快照
 - Valve 快照包含目标玩家时：显示英雄、等级、KDA、补反、个人净资产、当前装备与快照变化战报
-- Valve 快照包含世界坐标时：在 Dota 风格战术地图上显示双方十名英雄、存活建筑及目标移动轨迹
+- Valve 快照包含世界坐标时：在 7.40 详细地图上以游戏小地图英雄图标显示双方十名英雄、存活建筑及移动轨迹
 
 桌面观战层约每 20 秒刷新一次。SourceTV 本身是延迟直播，因此这里的“实时”表示持续更新 Valve 当前提供的快照，不保证与玩家屏幕同秒。
 
@@ -24,7 +24,7 @@
 
 ### 直接使用 EXE
 
-推荐运行 `Dota2-Dark-Reef-Monitor-0.7.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式。也可以运行不需要安装的 `Dota2-Dark-Reef-Monitor-0.7.0-x64-Portable.exe`。
+推荐运行 `Dota2-Dark-Reef-Monitor-0.8.0-x64-Setup.exe` 完成安装。安装版会创建开始菜单快捷方式。也可以运行不需要安装的 `Dota2-Dark-Reef-Monitor-0.8.0-x64-Portable.exe`。
 
 打开应用后填写：
 
@@ -34,6 +34,8 @@
 4. 如果提示需要验证，填入 Steam Guard 验证码并重新点击“开启监视”。
 
 成功登录后，刷新令牌保存在 Windows 当前用户的应用数据目录。以后通常可以不填密码直接“命令巡猎”。好友必须能被该账号通过 Steam 好友关系观战；好友隐私、比赛观战设置和 Valve 限制仍然有效。
+
+当前桌面界面一次只监看填写的一个 SteamID64。登录库能够读取账号的完整好友列表及在线游戏状态，因此可以扩展为“全部好友监控室”；为避免对大量好友逐个发送 GC 观战请求，合适的实现是先筛出正在运行 Dota 2 的好友，再为这些人建立牢房列表。
 
 ### 从源码运行
 
@@ -127,6 +129,8 @@ pnpm run build:win
 - Valve Dota 2 观战 protobuf：https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/Protobufs/dota_gcmessages_client_watch.proto
 - Valve 实时玩家与建筑坐标：https://github.com/SteamTracking/Protobufs/blob/master/dota2/dota_gcmessages_common.proto
 - Dota 世界地图使用 16384 单位导航网格：https://github.com/SteamTracking/GameTracking-Dota2/blob/master/game/dota/dota.fgd
+- 详细地图来自 OpenDota Web 的 7.40 地图资源：https://github.com/odota/web
+- 小地图英雄图标来自 Dota `pak01_dir.vpk` 的英雄图标表：https://github.com/bontscho/dota2-minimap-hero-sprites
 - [Electron BrowserWindow 与渲染沙箱](https://www.electronjs.org/docs/latest/api/browser-window)
 - [electron-builder Windows 安装版与便携版目标](https://www.electron.build/docs/win/)
 - [Node.js 环境文件参数](https://nodejs.org/api/cli.html#--env-file-if-existsfile)
