@@ -63,8 +63,8 @@
 .map-hero {
   position: absolute;
   z-index: 3;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border: 0.12rem solid #68d391;
   background: #08100d;
   box-shadow: 0 0 0 0.08rem #07100d, 0 0 0.45rem #000;
@@ -74,7 +74,7 @@
 
 .fast-travel .map-hero { transition-duration: 1.55s, 1.55s, 250ms, 250ms; }
 .map-hero.team-3 { border-color: #e77370; }
-.map-hero > .d2mh { display: block; transform: scale(0.94); transform-origin: top left; }
+.map-hero > .d2mh { display: block; }
 .map-hero.dead { opacity: 0.44; filter: grayscale(1); }
 
 .map-death-mark {
@@ -138,7 +138,6 @@
   .tactical-map-heading { align-items: flex-start; flex-direction: column; }
   .tactical-map-heading > span { text-align: left; }
   .map-legend { flex-wrap: wrap; justify-content: flex-start; }
-  .map-hero { width: 1.8rem; height: 1.8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
