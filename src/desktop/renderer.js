@@ -6,13 +6,21 @@ import {
 } from "./status-view.js";
 import { describeBattleChanges } from "../battle-feed.js";
 import { renderTacticalMap } from "./tactical-map-view.js";
+import { createAssistantView } from "./assistant-view.js";
+import { createArmoryView } from "./armory-view.js";
+import { createDraftRoomView } from "./draft-room-view.js";
 
+const appVariant = await window.watcher.getVariant();
 const form = document.querySelector("#watcher-form");
 const startButton = document.querySelector("#start-button");
 const stopButton = document.querySelector("#stop-button");
 const demoButton = document.querySelector("#demo-button");
+const assistantButton = document.querySelector("#assistant-button");
+const armoryButton = document.querySelector("#armory-button");
+const monitorRoomButton = document.querySelector("#monitor-room-button");
 const formError = document.querySelector("#form-error");
 const runState = document.querySelector("#run-state");
+const homeButton = document.querySelector("#home-button");
 const statusIndicator = document.querySelector("#status-indicator");
 const statusTitle = document.querySelector("#status-title");
 const statusDetail = document.querySelector("#status-detail");
@@ -22,8 +30,12 @@ const prisonerSeal = document.querySelector("#prisoner-seal");
 const prisonerName = document.querySelector("#prisoner-name");
 const prisonerNumber = document.querySelector("#prisoner-number");
 const prisonerCell = document.querySelector("#prisoner-cell");
+const entryScreen = document.querySelector("#entry-screen");
 const loginScreen = document.querySelector("#login-screen");
 const watchScreen = document.querySelector("#watch-screen");
+const assistantScreen = document.querySelector("#assistant-screen");
+const armoryScreen = document.querySelector("#armory-screen");
+const draftRoomScreen = document.querySelector("#draft-room-screen");
 const matchPanel = document.querySelector("#match-panel");
 const matchFields = Object.freeze({
   matchId: document.querySelector("#match-id"),
@@ -49,6 +61,8 @@ const battleFeed = document.querySelector("#battle-feed");
 const rememberedFields = ["account-name", "friend-steam-id"];
 let previousMatch;
 let battleEntries = [];
+let activeScreen = appVariant.allowsDemo ? "draft" : "home";
+let latestState;
 
 function renderEquipment(items) {
   const slots = [];
@@ -127,13 +141,19 @@ function restoreSettings() {
 }
 
 function render(state) {
+  latestState = state;
   const connecting = state.running === "connecting";
   const running = state.running === true;
   const demoRunning = state.running === "demo";
   const presentation = presentStatus(state.status);
-  const screen = screenForState(state);
+  const screen = ["assistant", "armory", "draft", "home"].includes(activeScreen) ? activeScreen : screenForState(state);
+  entryScreen.hidden = screen !== "home";
   loginScreen.hidden = screen !== "login";
   watchScreen.hidden = screen !== "watch";
+  assistantScreen.hidden = screen !== "assistant";
+  armoryScreen.hidden = screen !== "armory";
+  draftRoomScreen.hidden = screen !== "draft";
+  homeButton.hidden = screen === "home" || appVariant.allowsDemo;
   runState.textContent = connecting ? "接入中" : running ? "凝视中" : demoRunning ? "演习中" : "沉寂";
   runState.className = `run-state ${connecting || demoRunning ? "working" : running ? "active" : ""}`;
   statusIndicator.className = `status-indicator ${presentation.tone}`;
@@ -148,7 +168,7 @@ function render(state) {
   startButton.disabled = connecting || running || demoRunning;
   startButton.textContent = connecting ? "正在下潜…" : "呈交许可并巡猎";
   demoButton.disabled = connecting || running || demoRunning;
-  demoButton.textContent = demoRunning ? "小鱼人押送中…" : "押入小鱼人演示囚徒";
+  demoButton.textContent = demoRunning ? "演示战况运行中…" : "进入十人征召演示";
   stopButton.disabled = !connecting && !running && !demoRunning;
   for (const element of form.elements) {
     element.disabled = connecting || running || demoRunning;
@@ -177,8 +197,42 @@ function render(state) {
   renderBattleFeed(state.status?.match, state.status?.observedAt);
 }
 
+const assistantView = createAssistantView({
+  api: window.assistantLibrary,
+  onBack: () => {
+    activeScreen = "home";
+    render(latestState);
+  },
+});
+const armoryView = createArmoryView({
+  api: window.assistantLibrary,
+  onBack: () => {
+    activeScreen = "home";
+    render(latestState);
+  },
+});
+const draftRoomView = createDraftRoomView({
+  api: window.assistantLibrary,
+  onBack: () => {
+    if (appVariant.allowsDemo) {
+      activeScreen = "draft";
+      render(latestState);
+      void draftRoomView.openDemo();
+      return;
+    }
+    activeScreen = "monitor";
+    render(latestState);
+  },
+  onBattleDemo: async () => {
+    if (!appVariant.allowsDemo) return;
+    activeScreen = "monitor";
+    render(await window.watcher.demo());
+  },
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!appVariant.allowsMonitoring) return;
   if (!form.reportValidity()) return;
   rememberSettings();
   formError.hidden = true;
@@ -188,6 +242,7 @@ form.addEventListener("submit", async (event) => {
     password: document.querySelector("#password").value,
     guardCode: document.querySelector("#guard-code").value,
     webApiKey: document.querySelector("#web-api-key").value,
+    notifications: document.querySelector("#notifications").checked,
   };
   document.querySelector("#password").value = "";
   document.querySelector("#guard-code").value = "";
@@ -196,9 +251,60 @@ form.addEventListener("submit", async (event) => {
   render(state);
 });
 
-stopButton.addEventListener("click", async () => render(await window.watcher.stop()));
-demoButton.addEventListener("click", async () => render(await window.watcher.demo()));
+stopButton.addEventListener("click", async () => {
+  const state = await window.watcher.stop();
+  if (appVariant.allowsDemo) {
+    activeScreen = "draft";
+    render(state);
+    await draftRoomView.openDemo();
+    return;
+  }
+  render(state);
+});
+demoButton.addEventListener("click", async () => {
+  if (!appVariant.allowsDemo) return;
+  activeScreen = "draft";
+  render(latestState);
+  await draftRoomView.openDemo();
+});
+assistantButton.addEventListener("click", async () => {
+  if (!appVariant.allowsAssistant) return;
+  activeScreen = "assistant";
+  render(latestState);
+  await assistantView.open();
+});
+homeButton.addEventListener("click", () => {
+  assistantView.close();
+  activeScreen = "home";
+  render(latestState);
+});
+armoryButton.addEventListener("click", async () => {
+  if (!appVariant.allowsAssistant) return;
+  activeScreen = "armory";
+  render(latestState);
+  await armoryView.open();
+});
+monitorRoomButton.addEventListener("click", () => {
+  if (!appVariant.allowsMonitoring) return;
+  activeScreen = "monitor";
+  render(latestState);
+});
+document.querySelector("#monitor-room-back").addEventListener("click", () => {
+  activeScreen = "home";
+  render(latestState);
+});
 
 restoreSettings();
+document.title = appVariant.title;
+document.querySelector("#app-title").textContent = appVariant.title;
+document.querySelector("#app-eyebrow").textContent = appVariant.allowsDemo
+  ? "SIMULATION VAULT // NO ACCOUNT ACCESS"
+  : "SLITHEREEN GUARD // DARK REEF";
+demoButton.hidden = !appVariant.allowsDemo;
+assistantButton.hidden = !appVariant.allowsAssistant;
+armoryButton.hidden = !appVariant.allowsAssistant;
+monitorRoomButton.hidden = !appVariant.allowsMonitoring;
+document.querySelector("#draft-room-back").hidden = appVariant.allowsDemo;
 window.watcher.onState(render);
 render(await window.watcher.getState());
+if (appVariant.allowsDemo) await draftRoomView.openDemo();

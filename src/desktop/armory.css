@@ -1,0 +1,29 @@
+.armory-screen { display: grid; gap: 1rem; }
+.armory-screen[hidden] { display: none; }
+.armory-plans, .armory-roster, .armory-matchups { padding: 1rem; border: 1px solid #354b48; background: linear-gradient(145deg, rgba(8, 21, 23, .98), rgba(3, 9, 11, .98)); }
+.armory-plans h3, .armory-roster h3, .armory-matchups h3 { margin: 0; color: #d7d0b6; }
+.armory-plans p, .armory-roster p, .armory-matchups p { margin: .25rem 0 0; color: #718c86; font-size: .72rem; }
+.armory-plan-create { display: flex; gap: .5rem; margin-bottom: .8rem; }
+.armory-plan-create input { flex: 1; }
+.armory-pools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+.armory-pool { min-height: 8.5rem; padding: .7rem; border: 1px solid #3c5a55; background: rgba(2, 9, 11, .82); }
+.armory-pool:hover { border-color: #7aa99f; }
+.armory-pool h4 { margin: 0; color: #d8d1b7; }
+.armory-pool small { color: #718c86; }
+.armory-pool-heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); gap: .4rem; margin-top: .65rem; }
+.armory-pool-heroes > p { grid-column: 1 / -1; padding: 1rem; border: 1px dashed #29413d; text-align: center; }
+.armory-hero { display: grid; min-width: 0; padding: 0; overflow: hidden; border: 1px solid #263f3c; background: #061012; cursor: grab; }
+.armory-hero.selected { border-color: #9adfd1; box-shadow: 0 0 .7rem rgba(92, 227, 201, .45); }
+.armory-hero img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.armory-hero span { overflow: hidden; padding: .22rem; color: #bfc9c3; font-size: .62rem; text-overflow: ellipsis; white-space: nowrap; }
+.armory-roster .section-heading { align-items: end; justify-content: space-between; }
+.armory-hero-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); max-height: 24rem; gap: .45rem; overflow: auto; }
+.armory-matchup-form { display: grid; grid-template-columns: repeat(4, minmax(8rem, 1fr)); align-items: end; gap: .6rem; }
+.armory-matchup-form label span { display: block; color: #718c86; font-size: .66rem; }
+.armory-matchup-note { grid-column: span 3; }
+.armory-matchup-list { display: grid; gap: .4rem; margin-top: .8rem; }
+.armory-matchup-list article { display: flex; align-items: center; justify-content: space-between; gap: .7rem; padding: .5rem; border-top: 1px solid #203633; color: #aebbb5; font-size: .72rem; }
+#armory-message { margin: 0; color: #8ba59f; }
+#armory-message[data-tone="error"] { color: #e8aaa5; }
+#armory-message[data-tone="success"] { color: #8bc5b6; }
+@media (max-width: 880px) { .armory-pools { grid-template-columns: 1fr; } .armory-matchup-form { grid-template-columns: 1fr 1fr; } .armory-matchup-note { grid-column: 1 / -1; } }

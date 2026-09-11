@@ -88,3 +88,79 @@ test("monitor falls back to the Valve Web API when SourceTV has no entry", async
   assert.equal(status.source, "valve_web_api");
   assert.deepEqual(status.game, apiStats);
 });
+
+test("monitor reports which external operation failed", async () => {
+  const monitor = createMonitor({
+    friendSteamId64: "76561198000000000",
+    requestLive: false,
+    liveClient: {
+      spectateFriend: async () => {
+        throw new Error("connection reset");
+      },
+    },
+    now: clock,
+  });
+
+  assert.deepEqual(await monitor.poll(), {
+    phase: "transient_error",
+    operation: "spectate_friend",
+    reason: "Steam or Valve did not answer this poll",
+    observedAt: "2026-09-08T10:00:00.000Z",
+  });
+});
+
+test("monitor rejects a malformed successful spectate outcome", async () => {
+  const monitor = createMonitor({
+    friendSteamId64: "76561198000000000",
+    requestLive: false,
+    liveClient: {
+      spectateFriend: async () => ({ ok: true }),
+      findGameByServerId: async () => null,
+    },
+    now: clock,
+  });
+
+  await assert.rejects(() => monitor.poll(), /server Steam ID/);
+});
+
+test("monitor rejects a response that violates the spectate contract", async () => {
+  const monitor = createMonitor({
+    friendSteamId64: "76561198000000000",
+    requestLive: false,
+    liveClient: { spectateFriend: async () => null },
+    now: clock,
+  });
+
+  await assert.rejects(() => monitor.poll(), /result contract/);
+});
+
+test("monitor identifies SourceTV and realtime-stat failures", async () => {
+  const sourceTvFailure = createMonitor({
+    friendSteamId64: "76561198000000000",
+    requestLive: false,
+    liveClient: {
+      spectateFriend: async () => ({ ok: true, serverSteamId: "90123456789012345" }),
+      findGameByServerId: async () => {
+        throw new Error("SourceTV unavailable");
+      },
+    },
+    now: clock,
+  });
+  const statsFailure = createMonitor({
+    friendSteamId64: "76561198000000000",
+    requestLive: false,
+    liveClient: {
+      spectateFriend: async () => ({ ok: true, serverSteamId: "90123456789012345" }),
+      findGameByServerId: async () => null,
+    },
+    statsClient: {
+      getRealtimeStats: async () => {
+        throw new Error("Web API unavailable");
+      },
+    },
+    now: clock,
+  });
+
+  assert.equal((await sourceTvFailure.poll()).operation, "source_tv");
+  assert.equal((await statsFailure.poll()).operation, "realtime_stats");
+});

@@ -7,9 +7,12 @@
       content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.cloudflare.steamstatic.com; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>暗黑之礁 · 监控室</title>
+    <title>暗黑之礁</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./tactical-map.css" />
+    <link rel="stylesheet" href="./assistant.css" />
+    <link rel="stylesheet" href="./armory.css" />
+    <link rel="stylesheet" href="./draft-room.css" />
     <link rel="stylesheet" href="../../assets/dota-minimap-heroes.css" />
   </head>
   <body>
@@ -17,13 +20,35 @@
       <header class="app-header">
         <div class="mark" aria-hidden="true">D</div>
         <div>
-          <p class="eyebrow">SLITHEREEN GUARD // DARK REEF</p>
-          <h1>暗黑之礁 · 监控室</h1>
+          <p id="app-eyebrow" class="eyebrow">SLITHEREEN GUARD // DARK REEF</p>
+          <h1 id="app-title">暗黑之礁</h1>
         </div>
+        <button id="home-button" class="home-button" type="button" hidden>返回首页</button>
         <span id="run-state" class="run-state">沉寂</span>
       </header>
 
-      <section id="login-screen" class="screen login-screen" aria-labelledby="configuration-title">
+      <section id="entry-screen" class="screen entry-screen" aria-labelledby="entry-title">
+        <div class="entry-heading">
+          <p class="screen-index">DARK REEF // THREE DESCENTS</p>
+          <h2 id="entry-title">选择下潜路径</h2>
+        </div>
+        <div class="entry-gates">
+          <button id="assistant-button" class="entry-gate tactical" type="button">
+            <span>Ⅰ</span><strong>海渊战术台</strong><small>选人识图 · 阵容推荐 · 冷却记录</small>
+          </button>
+          <button id="armory-button" class="entry-gate armory" type="button">
+            <span>Ⅱ</span><strong>深海军备</strong><small>私人英雄池 · 对局经验 · 推荐偏好</small>
+          </button>
+          <button id="monitor-room-button" class="entry-gate monitor" type="button">
+            <span>Ⅲ</span><strong>监控室</strong><small>好友巡猎 · 战场回响 · 桌面通知</small>
+          </button>
+          <button id="demo-button" class="entry-gate demo" type="button" hidden>
+            <span>演</span><strong>十人征召演示</strong><small>预设阵容 · 无账号访问</small>
+          </button>
+        </div>
+      </section>
+
+      <section id="login-screen" class="screen login-screen" aria-labelledby="configuration-title" hidden>
         <section class="configuration">
           <div class="section-heading">
             <div>
@@ -70,13 +95,17 @@
                 <input id="web-api-key" name="webApiKey" type="password" autocomplete="off" maxlength="128" />
                 <small>用于向 Valve 索取更深层的实时战况，不会显露在观察窗中。</small>
               </label>
+              <label class="notification-toggle">
+                <input id="notifications" name="notifications" type="checkbox" checked />
+                <span>发现战场时请求 Windows 桌面通知</span>
+              </label>
             </details>
 
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <div class="actions login-actions">
               <button id="start-button" class="primary" type="submit">呈交许可并巡猎</button>
-              <button id="demo-button" class="demo" type="button">押入小鱼人演示囚徒</button>
-              <span>演示不连接 Steam，也不会读取或保存真实账号资料。</span>
+              <button id="monitor-room-back" class="secondary" type="button">返回入口</button>
+              <span>监控室与游玩助手互相隔离；选人识图和深海军备无需 Steam 登录。</span>
             </div>
           </form>
         </section>
@@ -194,10 +223,152 @@
         </div>
       </section>
 
-      <footer>
-        <span>斯拉达的远视水道</span>
-        <code>http://127.0.0.1:8787/status</code>
-      </footer>
+      <section id="draft-room-screen" class="screen draft-room-screen" aria-labelledby="draft-room-title" hidden>
+        <div class="watch-heading draft-room-heading">
+          <div>
+            <p id="draft-room-index" class="screen-index">LIVE SCREEN READING // LOCAL ONLY</p>
+            <h2 id="draft-room-title">实战选人仪</h2>
+          </div>
+          <div class="draft-room-stamps">
+            <strong id="draft-mode-stamp">正式模式 · 真实画面</strong>
+            <span id="draft-data-stamp">客观样本库载入中</span>
+          </div>
+        </div>
+        <section id="draft-live-brief" class="draft-live-brief" aria-labelledby="draft-live-brief-title">
+          <div>
+            <p class="screen-index">VISION BOUNDARY // CURRENT</p>
+            <h3 id="draft-live-brief-title">真实识图能力</h3>
+          </div>
+          <p>当前可捕获 Dota 2 可见窗口，并对比校准前后的英雄头像格，标出发生视觉变化的位置。</p>
+          <p>尚不能自动判断变化属于禁用、天辉选择或夜魇选择，所以正式模式不会展示伪造的十人阵容与克制分析。</p>
+        </section>
+        <section id="draft-demo-stage" class="draft-stage" aria-label="十人选人进度" hidden>
+          <div class="draft-team radiant"><strong>天辉</strong><div id="draft-radiant-slots" class="draft-team-slots"></div></div>
+          <div class="draft-stage-center"><span id="draft-step">0 / 10</span><strong>征召记录</strong><small id="draft-stage-note">等待第一枚战印</small></div>
+          <div class="draft-team dire"><strong>夜魇</strong><div id="draft-dire-slots" class="draft-team-slots"></div></div>
+        </section>
+        <section id="draft-demo-analysis" class="draft-analysis-panel" aria-labelledby="draft-analysis-title" hidden>
+          <div>
+            <p class="screen-index">LIVE DRAFT READING</p>
+            <h3 id="draft-analysis-title">实时选人判断</h3>
+            <p id="draft-analysis-warning">阵容尚未显形。</p>
+          </div>
+          <ol id="draft-recommendations" class="draft-recommendations"></ol>
+        </section>
+        <section class="draft-hero-board" aria-labelledby="draft-hero-board-title">
+          <div class="section-heading compact-heading">
+            <div><p class="screen-index">FAMILIAR DOTA LAYOUT</p><h3 id="draft-hero-board-title">识图投影阵列</h3></div>
+          </div>
+          <div id="draft-hero-grid" class="draft-hero-grid"></div>
+        </section>
+        <section class="draft-room-controls" aria-label="选人室控制">
+          <div id="draft-demo-controls" class="draft-mode-controls" hidden>
+            <button id="draft-next" class="primary" type="button">推进下一手</button>
+            <button id="draft-auto" class="secondary" type="button">自动推演</button>
+            <button id="draft-battle-demo" class="demo" type="button" disabled>进入实时战况演示</button>
+          </div>
+          <div id="draft-live-controls" class="draft-mode-controls">
+            <label><span>可见画面</span><select id="draft-capture-source"><option value="">选择 Dota 2 所在画面</option></select></label>
+            <button id="draft-source-refresh" class="secondary" type="button">读取 Dota 2 画面</button>
+            <button id="draft-deploy" class="primary" type="button">部署游戏投影</button>
+          </div>
+          <div class="draft-shared-controls"><button id="draft-room-back" class="secondary" type="button">返回入口</button></div>
+          <p id="draft-room-message" role="status">先读取 Dota 2 画面，再部署投影。识图操作位于投影工具条。</p>
+        </section>
+      </section>
+
+      <section id="assistant-screen" class="screen assistant-screen" aria-labelledby="assistant-title" hidden>
+        <div class="watch-heading assistant-heading">
+          <div>
+            <p class="screen-index">GAME ASSISTANT // LOCAL SCREEN READING</p>
+            <h2 id="assistant-title">海渊战术台</h2>
+          </div>
+          <span id="catalog-version">正在读取本地数据</span>
+        </div>
+
+        <section id="assistant-connection" class="assistant-connection" aria-labelledby="assistant-connection-title">
+          <div><span>1 · 游戏进程</span><h3 id="assistant-connection-title">获取 Dota 2 画面</h3></div>
+          <label><span>已找到的窗口</span><select id="capture-source"><option value="">正在寻找 Dota 2</option></select></label>
+          <button id="capture-refresh" class="secondary" type="button">重新获取</button>
+          <p id="assistant-message" role="status">正在自动查找本机 Dota 2。</p>
+        </section>
+
+        <section class="assistant-position-panel" aria-labelledby="assistant-position-title">
+          <div><span>2 · 你的分路职责</span><h3 id="assistant-position-title">识别结果</h3></div>
+          <strong id="assistant-position">等待选人画面</strong>
+        </section>
+
+        <button id="assistant-overlay" class="assistant-overlay-launch" type="button" disabled>
+          <span>3 · 进入游戏后使用</span><strong>覆盖到游戏画面</strong>
+          <small>选人时点亮推荐；进入战场后在敌方头像下显示大招与 BKB 状态</small>
+        </button>
+
+        <section class="live-draft-console" aria-labelledby="live-draft-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="screen-index">LIVE DRAFT</p>
+              <h3 id="live-draft-title">实时选人识别</h3>
+            </div>
+            <div class="auto-clock"><span>游戏时间自动同步</span><strong id="assistant-clock">--:--</strong></div>
+          </div>
+          <div class="assistant-draft-stage">
+            <div><strong>天辉</strong><div id="assistant-radiant-slots" class="assistant-team-slots"></div></div>
+            <div><strong>夜魇</strong><div id="assistant-dire-slots" class="assistant-team-slots"></div></div>
+          </div>
+          <p id="assistant-draft-status">等待 Dota 2 选人画面。识别到本机槽位与职责标记后，才会生成个人候选。</p>
+          <ol id="assistant-draft-recommendations" class="assistant-draft-recommendations"></ol>
+        </section>
+
+        <section class="enemy-board" aria-labelledby="enemy-board-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="screen-index">ENEMY COOLDOWNS</p>
+              <h3 id="enemy-board-title">敌方技能冷却记录</h3>
+            </div>
+          </div>
+          <div id="enemy-slots" class="enemy-slots"></div>
+        </section>
+
+        <div class="watch-controls">
+          <button id="assistant-back" class="secondary" type="button">返回暗黑之礁入口</button>
+          <span>官方资料只读；你的方案独立保存，更新不会覆盖。</span>
+        </div>
+      </section>
+
+      <section id="armory-screen" class="screen armory-screen" aria-labelledby="armory-title" hidden>
+        <div class="watch-heading armory-heading">
+          <div><p class="screen-index">PERSONAL HERO POOL</p><h2 id="armory-title">深海军备</h2></div>
+          <span>数据只保存在本机</span>
+        </div>
+        <section class="armory-plans" aria-labelledby="armory-plans-title">
+          <div class="section-heading compact-heading"><div><h3 id="armory-plans-title">我的方案</h3><p>把英雄拖进分组；战术台会优先推荐你更熟悉的英雄。</p></div></div>
+          <div class="armory-plan-create"><input id="armory-plan-name" maxlength="20" placeholder="新方案名称" /><button id="armory-plan-create" class="secondary" type="button">创建方案</button></div>
+          <div id="armory-pools" class="armory-pools" aria-label="私人英雄池">
+            <section class="armory-pool" data-pool-id="armory-signature"><h4>绝活</h4><small>最熟练，推荐权重最高</small><div class="armory-pool-heroes"></div></section>
+            <section class="armory-pool" data-pool-id="armory-won"><h4>赢过</h4><small>有过稳定获胜经验</small><div class="armory-pool-heroes"></div></section>
+            <section class="armory-pool" data-pool-id="armory-played"><h4>玩过</h4><small>了解基本操作</small><div class="armory-pool-heroes"></div></section>
+          </div>
+        </section>
+        <section class="armory-roster" aria-labelledby="armory-roster-title">
+          <div class="section-heading compact-heading"><div><h3 id="armory-roster-title">选择英雄</h3><p>拖动头像到上方分组，或先点头像再点分组。</p></div><input id="armory-hero-search" type="search" placeholder="搜索英雄" /></div>
+          <div id="armory-hero-roster" class="armory-hero-roster"></div>
+        </section>
+        <section class="armory-matchups" aria-labelledby="armory-matchups-title">
+          <div class="section-heading compact-heading"><div><h3 id="armory-matchups-title">个人对局经验</h3><p>这些判断会直接改变战术台中的推荐排序。</p></div></div>
+          <div class="armory-matchup-form">
+            <label><span>我使用</span><select id="armory-matchup-hero"></select></label>
+            <label><span>面对</span><select id="armory-matchup-against"></select></label>
+            <label><span>我的判断</span><select id="armory-matchup-direction"><option value="counter">特别克制</option><option value="afraid">特别怕</option></select></label>
+            <label><span>影响程度</span><select id="armory-matchup-intensity"><option value="1">轻微</option><option value="2">明显</option><option value="3">很强</option></select></label>
+            <label class="armory-matchup-note"><span>原因（可选）</span><input id="armory-matchup-note" maxlength="160" placeholder="例如：对线容易被压制" /></label>
+            <button id="armory-matchup-save" class="primary" type="button">保存关系</button>
+          </div>
+          <div id="armory-matchup-list" class="armory-matchup-list"></div>
+        </section>
+        <p id="armory-message" role="status"></p>
+        <div class="watch-controls"><button id="armory-back" class="secondary" type="button">返回暗黑之礁入口</button></div>
+      </section>
+
     </main>
     <script type="module" src="./renderer.js"></script>
   </body>

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  createConfiguredDesktopNotifier,
   createDesktopNotifier,
   shouldNotifyGameFound,
 } from "../src/windows-notifier.js";
@@ -79,4 +80,32 @@ test("createDesktopNotifier is a no-op when native notifications are unsupported
   });
 
   assert.equal(notify({ phase: "spectating_unlisted" }), false);
+});
+
+test("createConfiguredDesktopNotifier attempts delivery only when the user enables it", () => {
+  let shown = 0;
+  class FakeNotification {
+    static isSupported() {
+      return true;
+    }
+
+    on() {}
+
+    show() {
+      shown += 1;
+    }
+  }
+
+  const enabled = createConfiguredDesktopNotifier({
+    enabled: true,
+    NotificationImpl: FakeNotification,
+  });
+  const disabled = createConfiguredDesktopNotifier({
+    enabled: false,
+    NotificationImpl: FakeNotification,
+  });
+
+  assert.equal(enabled({ phase: "spectating_unlisted" }), true);
+  assert.equal(disabled({ phase: "spectating_unlisted" }), false);
+  assert.equal(shown, 1);
 });

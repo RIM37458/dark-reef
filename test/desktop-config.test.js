@@ -22,8 +22,25 @@ test("createDesktopConfig converts bounded form input into runtime configuration
   assert.equal(config.steam.sessionFile, "C:\\AppData\\steam-session.json");
   assert.equal(config.friendSteamId64, "76561198000000000");
   assert.equal(config.steamWebApiKey, "api-key");
-  assert.equal(config.windowsNotifications, false);
+  assert.equal(config.windowsNotifications, true);
   assert.equal(config.pollIntervalMs, 20_000);
+});
+
+test("createDesktopConfig preserves an explicit notification preference", () => {
+  const base = {
+    accountName: "watcher_bot",
+    friendSteamId64: "76561198000000000",
+  };
+
+  assert.equal(
+    createDesktopConfig({ ...base, notifications: false }, { sessionFile: "session" })
+      .windowsNotifications,
+    false,
+  );
+  assert.throws(
+    () => createDesktopConfig({ ...base, notifications: "false" }, { sessionFile: "session" }),
+    /notifications/,
+  );
 });
 
 test("createDesktopConfig rejects oversized and non-object renderer input", () => {
@@ -41,5 +58,12 @@ test("createDesktopConfig rejects oversized and non-object renderer input", () =
         { sessionFile: "session" },
       ),
     /accountName/,
+  );
+  assert.throws(
+    () => createDesktopConfig({
+      accountName: "watcher_bot",
+      friendSteamId64: "76561198000000000",
+    }, { sessionFile: "" }),
+    /session file/,
   );
 });

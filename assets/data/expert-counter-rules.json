@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "reviewedPatch": "7.41",
+  "reviewedAt": "2026-09-11T00:00:00.000Z",
+  "sources": [
+    { "id": "dotaconstants-10-8-0", "label": "dotaconstants 10.8.0 bundled ability and item facts", "kind": "bundled-game-data" },
+    { "id": "mechanic-review-7-41", "label": "Patch 7.41 mechanic interaction review", "kind": "mechanic-review" }
+  ],
+  "interactions": [
+    { "id": "restoration-denial", "effect": "health-restoration-denial", "trait": "health-restoration-reliance", "score": 3, "reason": "禁疗或大幅降低恢复会直接破坏其生存机制", "sourceId": "mechanic-review-7-41" },
+    { "id": "active-defence-lockout", "effect": "active-ability-suppression", "trait": "active-defence-reliance", "score": 3, "reason": "技能封锁会阻止关键主动保命手段", "sourceId": "mechanic-review-7-41" },
+    { "id": "strength-scaling-reduction", "effect": "strength-reduction", "trait": "strength-based-survival", "score": 2, "reason": "力量削减会压低以力量维持的生存空间", "sourceId": "mechanic-review-7-41" },
+    { "id": "basic-kit-copy-value", "effect": "enemy-basic-ability-copy", "trait": "valuable-copyable-basic-kit", "score": 3, "reason": "复制高价值基础技能会把对手的核心技能组转化为己用", "sourceId": "mechanic-review-7-41" },
+    { "id": "passive-defence-disable", "effect": "passive-disable", "trait": "passive-defence-reliance", "score": 3, "reason": "破坏会暂时移除承担主要生存职责的被动能力", "sourceId": "mechanic-review-7-41" },
+    { "id": "mana-based-survival-pressure", "effect": "mana-pressure", "trait": "mana-based-survival", "score": 3, "reason": "削减法力会同时压低以法力吸收伤害或逃生的能力", "sourceId": "mechanic-review-7-41" },
+    { "id": "sustained-mana-pressure", "effect": "mana-pressure", "trait": "sustained-mana-reliance", "score": 2, "reason": "削减法力会缩短持续耗蓝技能和高耗蓝机动的可用时间", "sourceId": "mechanic-review-7-41" },
+    { "id": "mobility-lock", "effect": "mobility-lock", "trait": "mobility-reliance", "score": 2, "reason": "束缚会限制依赖位移技能进退场的英雄", "sourceId": "mechanic-review-7-41" },
+    { "id": "movement-punishment", "effect": "movement-punishment", "trait": "mobility-reliance", "score": 3, "reason": "按移动距离结算的伤害会惩罚频繁长距离位移", "sourceId": "mechanic-review-7-41" },
+    { "id": "illusion-destruction", "effect": "illusion-destruction", "trait": "illusion-army-reliance", "score": 3, "reason": "直接清除或快速消耗幻象会瓦解幻象体系的输出与掩护", "sourceId": "mechanic-review-7-41" },
+    { "id": "unit-count-punishment", "effect": "unit-count-punishment", "trait": "illusion-army-reliance", "score": 2, "reason": "随附近或攻击单位数量增长的伤害会反制成群幻象", "sourceId": "mechanic-review-7-41" },
+    { "id": "defensive-buff-dispel", "effect": "offensive-dispel", "trait": "dispellable-defence-reliance", "score": 3, "reason": "进攻驱散会移除承担关键生存职责的可驱散增益", "sourceId": "mechanic-review-7-41" },
+    { "id": "attack-output-disable", "effect": "attack-disable", "trait": "attack-output-reliance", "score": 3, "reason": "缴械或变形会切断以普通攻击为主的输出窗口", "sourceId": "mechanic-review-7-41" },
+    { "id": "evasion-piercing", "effect": "evasion-piercing", "trait": "evasion-defence-reliance", "score": 3, "reason": "必中或真实命中会绕过依赖闪避的防御窗口", "sourceId": "mechanic-review-7-41" }
+  ],
+  "heroes": [
+    {
+      "heroId": 1,
+      "effects": [
+        { "mechanic": "mana-pressure", "strength": 3, "reason": "法力损毁攻击燃烧目标法力，法力虚空按缺失法力造成伤害", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 2, "reason": "闪烁承担主要进退场职责", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 4, "effects": [{ "mechanic": "movement-punishment", "strength": 3, "reason": "割裂按目标移动距离追加伤害", "sourceId": "dotaconstants-10-8-0" }], "traits": [] },
+    { "heroId": 6, "effects": [], "traits": [{ "mechanic": "attack-output-reliance", "strength": 3, "reason": "射手天赋与冰箭体系以持续普通攻击为主要输出", "sourceId": "mechanic-review-7-41" }] },
+    { "heroId": 7, "effects": [{ "mechanic": "unit-count-punishment", "strength": 3, "reason": "回音击使每个命中单位产生额外回音伤害", "sourceId": "dotaconstants-10-8-0" }], "traits": [] },
+    {
+      "heroId": 10,
+      "effects": [{ "mechanic": "enemy-basic-ability-copy", "strength": 3, "reason": "变形可取得目标的基础技能", "sourceId": "dotaconstants-10-8-0" }],
+      "traits": [
+        { "mechanic": "health-restoration-reliance", "strength": 3, "reason": "敏捷转力量承担核心生存职责", "sourceId": "mechanic-review-7-41" },
+        { "mechanic": "active-defence-reliance", "strength": 3, "reason": "属性转换和波浪形态需要主动施放", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "strength-based-survival", "strength": 2, "reason": "力量属性决定转换后的生命上限", "sourceId": "mechanic-review-7-41" },
+        { "mechanic": "mobility-reliance", "strength": 2, "reason": "波浪形态承担切入与脱离职责", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 12,
+      "effects": [],
+      "traits": [
+        { "mechanic": "illusion-army-reliance", "strength": 3, "reason": "并列与幻影冲锋围绕持续生成和维持幻象运作", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 2, "reason": "神行百变承担驱散、混淆与规避职责", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 13,
+      "effects": [{ "mechanic": "mobility-lock", "strength": 3, "reason": "梦境缠绕束缚目标并惩罚拉断距离", "sourceId": "dotaconstants-10-8-0" }],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "幻象法球、相位转移与灵动之翼构成主要生存循环", "sourceId": "mechanic-review-7-41" },
+        { "mechanic": "active-defence-reliance", "strength": 3, "reason": "相位转移和灵动之翼需要主动施放以规避伤害", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 17,
+      "effects": [],
+      "traits": [
+        { "mechanic": "mana-based-survival", "strength": 3, "reason": "球状闪电以法力换取无视地形的逃生距离", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "sustained-mana-reliance", "strength": 3, "reason": "球状闪电按总法力和移动距离持续消耗法力", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "球状闪电承担核心进退场职责", "sourceId": "mechanic-review-7-41" },
+        { "mechanic": "active-defence-reliance", "strength": 3, "reason": "球状闪电需要主动施放才能脱离集火", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 21,
+      "effects": [],
+      "traits": [
+        { "mechanic": "dispellable-defence-reliance", "strength": 3, "reason": "风行提供移速与物理闪避且可被驱散", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "evasion-defence-reliance", "strength": 3, "reason": "风行以闪避普通攻击形成关键防御窗口", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 2, "reason": "集中火力的主要收益来自持续普通攻击", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 26,
+      "effects": [
+        { "mechanic": "mana-pressure", "strength": 2, "reason": "法力汲取持续抽取目标法力", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-disable", "strength": 3, "reason": "妖术使目标失去有效攻击能力", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-ability-suppression", "strength": 2, "reason": "妖术在较短控制窗口内封锁目标特殊能力", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    {
+      "heroId": 29,
+      "effects": [{ "mechanic": "mobility-lock", "strength": 2, "reason": "深海锚锁束缚目标并限制其远离锚点", "sourceId": "dotaconstants-10-8-0" }],
+      "traits": [{ "mechanic": "passive-defence-reliance", "strength": 2, "reason": "海妖外壳被动承担物理伤害格挡与阈值驱散职责", "sourceId": "dotaconstants-10-8-0" }]
+    },
+    {
+      "heroId": 36,
+      "effects": [],
+      "traits": [
+        { "mechanic": "health-restoration-reliance", "strength": 3, "reason": "施虐之心与死亡脉冲支撑持续回复循环", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "dispellable-defence-reliance", "strength": 3, "reason": "幽魂护罩放大回复并规避普通攻击，且可被驱散", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 39,
+      "effects": [],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "闪烁承担主要进退场与脱离职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 2, "reason": "闪烁需要主动施放才能脱离威胁", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 44,
+      "effects": [
+        { "mechanic": "passive-disable", "strength": 1, "reason": "神杖升级的刀阵旋风会对范围内目标施加破坏", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": [
+        { "mechanic": "passive-defence-reliance", "strength": 2, "reason": "飘忽不定的被动闪避承担物理防御职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "evasion-defence-reliance", "strength": 2, "reason": "飘忽不定依靠随等级成长的闪避降低普通攻击伤害", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 3, "reason": "恩赐解脱与攻击被动构成主要爆发输出", "sourceId": "mechanic-review-7-41" }
+      ]
+    },
+    {
+      "heroId": 54,
+      "effects": [],
+      "traits": [
+        { "mechanic": "valuable-copyable-basic-kit", "strength": 3, "reason": "狂暴等高价值基础技能可被复制", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "health-restoration-reliance", "strength": 2, "reason": "盛宴按目标最大生命值提供攻击吸血", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 3, "reason": "盛宴与尸鬼狂怒依靠持续普通攻击兑现收益", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 58, "effects": [{ "mechanic": "offensive-dispel", "strength": 2, "reason": "魅惑对敌方目标施加基本驱散", "sourceId": "dotaconstants-10-8-0" }], "traits": [] },
+    {
+      "heroId": 59,
+      "effects": [],
+      "traits": [
+        { "mechanic": "health-restoration-reliance", "strength": 3, "reason": "狂战士之血随损失生命值提高基于力量的生命恢复", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 2, "reason": "沸血之矛与狂战士之血需要持续普通攻击兑现", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 63,
+      "effects": [],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "缩地承担主要切入、追击与脱离职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 3, "reason": "缩地与时光倒流需要主动施放以规避或回退伤害", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 67, "effects": [], "traits": [{ "mechanic": "passive-defence-reliance", "strength": 3, "reason": "折射被动承担全类型伤害减免与反射职责", "sourceId": "dotaconstants-10-8-0" }] },
+    {
+      "heroId": 68,
+      "effects": [
+        { "mechanic": "health-restoration-denial", "strength": 3, "reason": "冰晶爆轰禁止目标恢复和治疗", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "strength-reduction", "strength": 2, "reason": "刺骨寒意可持续削减英雄力量", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    {
+      "heroId": 69,
+      "effects": [
+        { "mechanic": "health-restoration-denial", "strength": 3, "reason": "末日禁止目标以任何方式治疗", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-ability-suppression", "strength": 3, "reason": "末日阻止目标施放技能", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    { "heroId": 70, "effects": [], "traits": [{ "mechanic": "attack-output-reliance", "strength": 3, "reason": "怒意狂击与超强力量需要连续普通攻击叠加和兑现", "sourceId": "dotaconstants-10-8-0" }] },
+    { "heroId": 73, "effects": [], "traits": [{ "mechanic": "health-restoration-reliance", "strength": 3, "reason": "化学狂暴提供高额生命恢复并支撑正面作战", "sourceId": "dotaconstants-10-8-0" }] },
+    {
+      "heroId": 74,
+      "effects": [
+        { "mechanic": "mana-pressure", "strength": 3, "reason": "电磁脉冲燃烧范围内目标法力", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "offensive-dispel", "strength": 2, "reason": "强袭飓风落地时驱散敌方增益", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    { "heroId": 79, "effects": [{ "mechanic": "offensive-dispel", "strength": 3, "reason": "邪恶净化持续驱散目标的正面增益", "sourceId": "dotaconstants-10-8-0" }], "traits": [] },
+    {
+      "heroId": 81,
+      "effects": [],
+      "traits": [
+        { "mechanic": "illusion-army-reliance", "strength": 3, "reason": "幻象与混沌一击共同构成爆发和目标混淆", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 2, "reason": "混沌一击和幻象输出依靠普通攻击", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 88,
+      "effects": [
+        { "mechanic": "passive-disable", "strength": 2, "reason": "复仇攻击会对目标施加破坏", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "mana-pressure", "strength": 2, "reason": "法力燃烧削减目标法力并造成伤害", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    { "heroId": 89, "effects": [], "traits": [{ "mechanic": "illusion-army-reliance", "strength": 3, "reason": "镜像创造多名幻象承担刷钱、推线与团战输出", "sourceId": "dotaconstants-10-8-0" }] },
+    {
+      "heroId": 93,
+      "effects": [{ "mechanic": "mobility-lock", "strength": 2, "reason": "突袭命中后束缚目标", "sourceId": "dotaconstants-10-8-0" }],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 2, "reason": "突袭承担贴身与脱离职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 3, "reason": "黑暗契约与暗影之舞需要主动施放来解除或规避威胁", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 94, "effects": [], "traits": [{ "mechanic": "mana-based-survival", "strength": 3, "reason": "魔法盾以法力吸收大部分伤害", "sourceId": "dotaconstants-10-8-0" }] },
+    { "heroId": 95, "effects": [], "traits": [{ "mechanic": "attack-output-reliance", "strength": 3, "reason": "热血战魂与战斗专注围绕连续普通攻击运作", "sourceId": "dotaconstants-10-8-0" }] },
+    {
+      "heroId": 98,
+      "effects": [],
+      "traits": [
+        { "mechanic": "passive-defence-reliance", "strength": 3, "reason": "活性护甲被动提供叠加护甲与生命恢复", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "health-restoration-reliance", "strength": 2, "reason": "活性护甲的叠加生命恢复支撑持续承伤", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 99, "effects": [], "traits": [{ "mechanic": "passive-defence-reliance", "strength": 3, "reason": "钢毛后背被动承担背侧伤害减免并触发针刺扫射", "sourceId": "dotaconstants-10-8-0" }] },
+    {
+      "heroId": 106,
+      "effects": [],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "残焰承担长距离切入与脱离职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 2, "reason": "残焰和无影拳需要主动施放以改变位置或规避攻击", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "dispellable-defence-reliance", "strength": 2, "reason": "烈火罩吸收魔法伤害且可被驱散", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 109,
+      "effects": [],
+      "traits": [
+        { "mechanic": "illusion-army-reliance", "strength": 3, "reason": "魔化会同步强化附近幻象，黑暗团结也直接强化己方幻象", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-output-reliance", "strength": 3, "reason": "魔化和幻象体系依靠持续普通攻击输出", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    {
+      "heroId": 111,
+      "effects": [
+        { "mechanic": "offensive-dispel", "strength": 2, "reason": "气运之末会驱散敌方目标及周围单位的正面增益", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "attack-disable", "strength": 3, "reason": "命运敕令会缴械目标", "sourceId": "dotaconstants-10-8-0" }
+      ],
+      "traits": []
+    },
+    { "heroId": 123, "effects": [{ "mechanic": "passive-disable", "strength": 3, "reason": "神射手蓄力命中英雄后施加破坏", "sourceId": "dotaconstants-10-8-0" }], "traits": [] },
+    {
+      "heroId": 126,
+      "effects": [],
+      "traits": [
+        { "mechanic": "mobility-reliance", "strength": 3, "reason": "异化与太虚之径承担核心进退场职责", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "active-defence-reliance", "strength": 2, "reason": "异化与共鸣脉冲需要主动施放来规避或吸收伤害", "sourceId": "dotaconstants-10-8-0" },
+        { "mechanic": "dispellable-defence-reliance", "strength": 2, "reason": "共鸣脉冲的物理护盾可被驱散", "sourceId": "dotaconstants-10-8-0" }
+      ]
+    },
+    { "heroId": 131, "effects": [{ "mechanic": "illusion-destruction", "strength": 3, "reason": "聚光灯使照到的幻象按最大生命值持续消散", "sourceId": "dotaconstants-10-8-0" }], "traits": [] }
+  ],
+  "items": [
+    { "itemId": 267, "buyerAnyRole": ["Support", "Nuker", "Disabler", "Initiator"], "buyerNoneRole": ["Carry"], "effects": [{ "mechanic": "health-restoration-denial", "strength": 2, "reason": "魂之释放可大幅降低目标生命恢复", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 160, "buyerAnyRole": ["Carry"], "buyerNoneRole": [], "effects": [{ "mechanic": "health-restoration-denial", "strength": 2, "reason": "霜冻攻击可降低目标生命恢复", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 249, "buyerAnyRole": ["Carry", "Nuker", "Initiator"], "buyerNoneRole": [], "effects": [{ "mechanic": "passive-disable", "strength": 3, "reason": "破隐一击会禁用目标被动能力", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 174, "buyerAnyRole": ["Carry"], "buyerNoneRole": [], "effects": [{ "mechanic": "mana-pressure", "strength": 2, "reason": "反馈攻击燃烧目标法力", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 1097, "buyerAnyRole": ["Carry", "Escape"], "buyerNoneRole": [], "effects": [{ "mechanic": "mana-pressure", "strength": 2, "reason": "反馈攻击燃烧目标法力", "sourceId": "dotaconstants-10-8-0" }, { "mechanic": "offensive-dispel", "strength": 2, "reason": "压制会驱散敌方目标并持续减速", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 96, "buyerAnyRole": ["Support", "Nuker", "Disabler", "Initiator"], "buyerNoneRole": [], "effects": [{ "mechanic": "attack-disable", "strength": 3, "reason": "妖术期间目标被沉默、禁用物品并缴械", "sourceId": "dotaconstants-10-8-0" }, { "mechanic": "active-ability-suppression", "strength": 3, "reason": "妖术期间目标无法施放技能或物品", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 135, "buyerAnyRole": ["Carry"], "buyerNoneRole": [], "effects": [{ "mechanic": "evasion-piercing", "strength": 3, "reason": "穿刺攻击提供高概率无视闪避的命中", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 250, "buyerAnyRole": ["Carry", "Nuker"], "buyerNoneRole": [], "effects": [{ "mechanic": "evasion-piercing", "strength": 2, "reason": "灵魂撕裂期间对目标的攻击获得真实命中", "sourceId": "dotaconstants-10-8-0" }, { "mechanic": "active-ability-suppression", "strength": 2, "reason": "灵魂撕裂沉默目标并延后结算额外伤害", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 158, "buyerAnyRole": ["Carry", "Pusher"], "buyerNoneRole": [], "effects": [{ "mechanic": "unit-count-punishment", "strength": 2, "reason": "连环闪电在多个目标间弹射，静电冲击由攻击触发", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 210, "buyerAnyRole": ["Carry", "Durable", "Initiator"], "buyerNoneRole": [], "effects": [{ "mechanic": "attack-disable", "strength": 3, "reason": "缴械使目标在持续时间内无法攻击", "sourceId": "dotaconstants-10-8-0" }] },
+    { "itemId": 225, "buyerAnyRole": ["Carry", "Nuker"], "buyerNoneRole": [], "effects": [{ "mechanic": "offensive-dispel", "strength": 3, "reason": "否决会持续驱散目标的正面增益", "sourceId": "dotaconstants-10-8-0" }] }
+  ]
+}

@@ -1,8 +1,10 @@
 allowBuilds:
   electron: true
   electron-winstaller: false
+  tesseract.js: true
 minimumReleaseAgeExclude:
   - electron@44.3.0
+  - adm-zip@0.6.1
 overrides:
-  adm-zip: 0.6.0
+  adm-zip: 0.6.1
   protobufjs: 7.6.6

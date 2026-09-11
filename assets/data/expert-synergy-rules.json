@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "reviewedPatch": "7.41",
+  "reviewedAt": "2026-09-11T00:00:00.000Z",
+  "sources": [
+    {
+      "id": "bsj-high-level-observation",
+      "author": "BSJ",
+      "url": "https://bsjdota.com/blog/spectating-high-level-dota-2-games-key-benefits-before-you-play/",
+      "publishedAt": "2025-05-09",
+      "kind": "expert-teaching"
+    },
+    {
+      "id": "bsj-resource-conflict",
+      "author": "BSJ",
+      "url": "https://bsjdota.com/blog/grinding-but-not-improving-in-dota-2-heres-why/",
+      "publishedAt": "2026",
+      "kind": "expert-teaching"
+    }
+  ],
+  "rules": [
+    {
+      "id": "setup-followup",
+      "allyAnyRole": ["Initiator", "Disabler"],
+      "candidateAnyRole": ["Nuker", "Carry"],
+      "score": 1.5,
+      "reason": "已有先手或控制，候选能接续伤害与控制窗口",
+      "sourceId": "bsj-high-level-observation"
+    },
+    {
+      "id": "frontline-support",
+      "allyAnyRole": ["Durable"],
+      "candidateAnyRole": ["Support"],
+      "score": 1,
+      "reason": "前排与救援、续航型后排更容易形成完整交战结构",
+      "sourceId": "bsj-high-level-observation"
+    },
+    {
+      "id": "resource-conflict",
+      "allyAnyRole": ["Carry"],
+      "candidateAnyRole": ["Carry"],
+      "score": -1.5,
+      "reason": "多个高资源核心会压缩彼此的兵线、野区与成装时点",
+      "sourceId": "bsj-resource-conflict"
+    }
+  ]
+}

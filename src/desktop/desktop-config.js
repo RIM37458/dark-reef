@@ -9,6 +9,13 @@ function boundedText(input, name, maxLength) {
   return value;
 }
 
+function boolean(input, name, fallback) {
+  const value = input[name];
+  if (value === undefined) return fallback;
+  if (typeof value !== "boolean") throw new Error(`${name} must be true or false`);
+  return value;
+}
+
 export function createDesktopConfig(input, { sessionFile }) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     throw new Error("A configuration object is required");
@@ -23,7 +30,7 @@ export function createDesktopConfig(input, { sessionFile }) {
     STEAM_SESSION_FILE: sessionFile,
     FRIEND_STEAM_ID64: boundedText(input, "friendSteamId64", 17),
     STEAM_WEB_API_KEY: boundedText(input, "webApiKey", 128),
-    WINDOWS_NOTIFICATIONS: "false",
+    WINDOWS_NOTIFICATIONS: String(boolean(input, "notifications", true)),
     POLL_INTERVAL_MS: "20000",
   });
 }

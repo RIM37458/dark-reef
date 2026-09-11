@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>选人助手</title>
+    <link rel="stylesheet" href="./draft-toolbar.css" />
+  </head>
+  <body>
+    <header><strong>选人助手</strong><span>本机画面识别</span><button id="close" type="button" aria-label="关闭覆盖">×</button></header>
+    <main>
+      <div class="overlay-reading"><strong id="role">正在识别分路职责</strong><span id="recommendation-count">等待推荐</span></div>
+      <p id="message" role="status"></p>
+    </main>
+    <script type="module" src="./draft-toolbar.js"></script>
+  </body>
+</html>

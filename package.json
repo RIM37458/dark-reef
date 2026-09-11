@@ -1,8 +1,9 @@
 {
-  "name": "dota-friend-watcher",
-  "version": "0.8.0",
-  "description": "Monitor a Steam friend's Dota 2 match from a Windows desktop app.",
-  "author": "Dota Friend Watcher contributors",
+  "name": "dota-dark-reef",
+  "version": "0.17.0",
+  "description": "Dark Reef, a local Dota 2 gameplay assistant and friend match viewer for Windows.",
+  "author": "Dark Reef contributors",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "main": "src/desktop/main.js",
@@ -14,14 +15,28 @@
     "start": "electron .",
     "start:service": "node --env-file-if-exists=.env src/main.js",
     "generate:icons": "node scripts/generate-icons.js",
-    "build:win": "electron-builder --win nsis portable --x64",
+    "sync:matchups": "node scripts/sync-matchups.js",
+    "sync:items": "node scripts/sync-item-popularity.js",
+    "sync:hero-portraits": "node scripts/sync-hero-portraits.js",
+    "build:win": "pnpm run build:win:formal && pnpm run build:win:demo",
+    "build:win:formal": "electron-builder --config build/electron-builder.formal.cjs --win nsis portable --x64",
+    "build:win:demo": "electron-builder --config build/electron-builder.demo.cjs --win nsis portable --x64",
     "test": "node --test",
-    "check": "node scripts/check.js"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/** --test-coverage-lines=98 --test-coverage-branches=84 --test-coverage-functions=93.5",
+    "check:syntax": "node scripts/check.js",
+    "check:floor": "node scripts/floor-guard.js",
+    "check:security": "pnpm audit --audit-level high",
+    "check:task": "pnpm run check && pnpm run test:coverage",
+    "check:full": "pnpm run check:task && pnpm run check:security",
+    "check": "pnpm run check:syntax && pnpm run check:floor"
   },
   "dependencies": {
+    "@tesseract.js-data/chi_sim": "1.0.0",
+    "@tesseract.js-data/eng": "1.0.0",
     "dotaconstants": "10.8.0",
     "dotakit": "0.4.0",
-    "steam-user": "5.3.0"
+    "steam-user": "5.3.0",
+    "tesseract.js": "7.0.0"
   },
   "devDependencies": {
     "electron": "44.3.0",
@@ -29,7 +44,7 @@
   },
   "build": {
     "appId": "com.codex.dota-friend-watcher",
-    "productName": "暗黑之礁监控室",
+    "productName": "暗黑之礁",
     "directories": {
       "output": "release"
     },
@@ -40,6 +55,12 @@
       "src/**/*",
       "package.json"
     ],
+    "asarUnpack": [
+      "node_modules/@tesseract.js-data/chi_sim/**/*",
+      "node_modules/@tesseract.js-data/eng/**/*",
+      "node_modules/tesseract.js/**/*",
+      "node_modules/tesseract.js-core/**/*"
+    ],
     "win": {
       "icon": "assets/icon.ico",
       "target": [
@@ -48,14 +69,14 @@
       ]
     },
     "nsis": {
-      "artifactName": "Dota2-Dark-Reef-Monitor-${version}-${arch}-Setup.${ext}",
+      "artifactName": "Dota2-Dark-Reef-${version}-${arch}-Setup.${ext}",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
     "portable": {
-      "artifactName": "Dota2-Dark-Reef-Monitor-${version}-${arch}-Portable.${ext}"
+      "artifactName": "Dota2-Dark-Reef-${version}-${arch}-Portable.${ext}"
     }
   }
 }

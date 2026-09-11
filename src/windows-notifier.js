@@ -20,3 +20,9 @@ export function createDesktopNotifier({ NotificationImpl, onClick = () => {} }) 
     return true;
   };
 }
+
+export function createConfiguredDesktopNotifier({ enabled, NotificationImpl, onClick }) {
+  return enabled
+    ? createDesktopNotifier({ NotificationImpl, onClick })
+    : () => false;
+}

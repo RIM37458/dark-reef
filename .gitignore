@@ -9,6 +9,8 @@ node_modules/
 dist/
 release/
 data/
+!assets/data/
+!assets/data/*.json
 .env
 .env.local
 .env.*.local

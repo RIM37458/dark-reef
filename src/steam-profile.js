@@ -21,13 +21,44 @@ async function fetchAvatarDataUrl(url, fetchImpl) {
   if (!ALLOWED_IMAGE_TYPES.has(type)) return undefined;
   const declaredSize = Number(response.headers.get("content-length"));
   if (Number.isFinite(declaredSize) && declaredSize > MAX_AVATAR_BYTES) return undefined;
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  if (bytes.byteLength > MAX_AVATAR_BYTES) return undefined;
+  if (!response.body) return undefined;
+  const reader = response.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_AVATAR_BYTES) {
+        await reader.cancel();
+        return undefined;
+      }
+      chunks.push(Buffer.from(value));
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = Buffer.concat(chunks, totalBytes);
   return `data:${type};base64,${Buffer.from(bytes).toString("base64")}`;
 }
 
+function profileResult({ steamId64, personaName, avatarDataUrl }) {
+  return Object.fromEntries(Object.entries({
+    steamId64,
+    personaName,
+    avatarDataUrl,
+    profileStatus: avatarDataUrl ? "available" : "partial",
+    profileReason: avatarDataUrl ? undefined : "avatar_unavailable",
+  }).filter(([, value]) => value !== undefined));
+}
+
+function unavailableProfile(steamId64, profileStatus, profileReason) {
+  return { steamId64, profileStatus, profileReason };
+}
+
 export async function loadSteamProfile({ apiKey, steamId64, steamUser, fetchImpl = fetch }) {
-  const fallback = { steamId64 };
+  let personaLookupFailed = false;
 
   if (steamUser?.getPersonas) {
     try {
@@ -37,29 +68,37 @@ export async function loadSteamProfile({ apiKey, steamId64, steamUser, fetchImpl
           ? persona.player_name.slice(0, 128)
           : undefined;
         const avatarDataUrl = await fetchAvatarDataUrl(persona.avatar_url_full, fetchImpl);
-        return Object.fromEntries(Object.entries({ steamId64, personaName, avatarDataUrl }).filter(([, value]) => value));
+        return profileResult({ steamId64, personaName, avatarDataUrl });
       }
     } catch {
-      // A public Web API lookup can still recover the portrait when the persona request times out.
+      personaLookupFailed = true;
     }
   }
 
-  if (!apiKey) return fallback;
+  if (!apiKey) {
+    if (personaLookupFailed) {
+      return unavailableProfile(steamId64, "error", "persona_lookup_failed");
+    }
+    const reason = steamUser?.getPersonas ? "profile_not_found" : "no_profile_source";
+    return unavailableProfile(steamId64, "unavailable", reason);
+  }
 
   try {
     const endpoint = new URL("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/");
     endpoint.searchParams.set("key", apiKey);
     endpoint.searchParams.set("steamids", steamId64);
     const response = await fetchImpl(endpoint, { signal: AbortSignal.timeout(8_000) });
-    if (!response.ok) return fallback;
+    if (!response.ok) {
+      return unavailableProfile(steamId64, "error", "steam_web_api_http_error");
+    }
     const player = (await response.json())?.response?.players?.[0];
-    if (!player) return fallback;
+    if (!player) return unavailableProfile(steamId64, "unavailable", "profile_not_found");
     const personaName = typeof player.personaname === "string"
       ? player.personaname.slice(0, 128)
       : undefined;
     const avatarDataUrl = await fetchAvatarDataUrl(player.avatarfull, fetchImpl);
-    return Object.fromEntries(Object.entries({ steamId64, personaName, avatarDataUrl }).filter(([, value]) => value));
+    return profileResult({ steamId64, personaName, avatarDataUrl });
   } catch {
-    return fallback;
+    return unavailableProfile(steamId64, "error", "steam_web_api_failed");
   }
 }

@@ -108,6 +108,43 @@ test("startWatcher prefers an explicit refresh token over a password", async () 
   await app.stop();
 });
 
+test("desktop token store replaces plaintext session persistence", async () => {
+  let loginOptions;
+  let tokenListener;
+  const saved = [];
+  const app = await startWatcher(
+    {
+      steam: { accountName: "watcher_bot", password: "private-password", sessionFile: "plaintext.json" },
+      friendSteamId64: "76561198000000000",
+      requestLive: false,
+      pollIntervalMs: 30_000,
+      http: { host: "127.0.0.1", port: 8787 },
+    },
+    {
+      loginDota: async (options) => {
+        loginOptions = options;
+        options.onSession({ on: (_event, listener) => { tokenListener = listener; } });
+        return { live: {}, logout() {} };
+      },
+      tokenStore: {
+        load: () => "encrypted-refresh-token",
+        save: (accountName, token) => saved.push([accountName, token]),
+      },
+      monitorFactory: () => ({ poll: async () => {}, getStatus: () => ({}) }),
+      serverFactory: () => ({ listen: async () => {}, close: async () => {} }),
+      setIntervalFn: () => 1,
+      clearIntervalFn: () => {},
+    },
+  );
+
+  assert.equal(loginOptions.refreshToken, "encrypted-refresh-token");
+  assert.equal("password" in loginOptions, false);
+  assert.equal("sessionFile" in loginOptions, false);
+  tokenListener("rotated-refresh-token");
+  assert.deepEqual(saved, [["watcher_bot", "rotated-refresh-token"]]);
+  await app.stop();
+});
+
 test("startWatcher notifies once per transition into a discovered game", async () => {
   let scheduledPoll;
   let status = { phase: "starting" };
@@ -150,5 +187,67 @@ test("startWatcher notifies once per transition into a discovered game", async (
   await scheduledPoll();
 
   assert.deepEqual(notifications, ["1", "2"]);
+  await app.stop();
+});
+
+test("startWatcher logs out when initialization after login fails", async () => {
+  let loggedOut = false;
+
+  await assert.rejects(
+    () => startWatcher(
+      {
+        steam: { accountName: "watcher_bot", password: "secret", sessionFile: "session" },
+        friendSteamId64: "76561198000000000",
+        requestLive: false,
+        pollIntervalMs: 30_000,
+        http: { host: "127.0.0.1", port: 8787 },
+      },
+      {
+        loginDota: async () => ({
+          live: {},
+          logout() {
+            loggedOut = true;
+          },
+        }),
+        monitorFactory: () => {
+          throw new Error("monitor setup failed");
+        },
+      },
+    ),
+    /monitor setup failed/,
+  );
+
+  assert.equal(loggedOut, true);
+});
+
+test("startWatcher reports notification delivery errors and keeps monitoring", async () => {
+  const deliveryError = new Error("notification unavailable");
+  const reported = [];
+  const app = await startWatcher(
+    {
+      steam: { accountName: "watcher_bot", password: "secret", sessionFile: "session" },
+      friendSteamId64: "76561198000000000",
+      requestLive: false,
+      pollIntervalMs: 30_000,
+      http: { host: "127.0.0.1", port: 8787 },
+    },
+    {
+      loginDota: async () => ({ live: {}, logout() {} }),
+      monitorFactory: () => ({
+        getStatus: () => ({ phase: "starting" }),
+        poll: async () => ({ phase: "spectating_unlisted", serverSteamId: "1" }),
+      }),
+      serverFactory: () => ({ listen: async () => {}, close: async () => {} }),
+      notify: () => {
+        throw deliveryError;
+      },
+      onNotificationError: (error) => reported.push(error),
+      setIntervalFn: () => 1,
+      clearIntervalFn: () => {},
+    },
+  );
+
+  assert.deepEqual(reported, [deliveryError]);
+  assert.equal(app.getStatus().phase, "starting");
   await app.stop();
 });
