@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createHeroReferenceLibrary } from "../src/assistant/hero-reference-library.js";
+import {
+  createHeroReferenceLibrary,
+  withBundledHeroPortraits,
+} from "../src/assistant/hero-reference-library.js";
 
 function imageFrame(value) {
   return { width: 8, height: 4, data: Buffer.alloc(8 * 4 * 4, value) };
@@ -41,4 +44,28 @@ test("hero reference library rejects duplicate ids and unsafe files", async () =
     ] },
     loadImage: async () => imageFrame(0),
   }), /重复/);
+});
+
+test("desktop catalog uses bundled hero portraits instead of remote image requests", () => {
+  const catalog = {
+    heroes: [
+      { id: 1, name: "Anti-Mage", imageUrl: "https://cdn.example/antimage.png" },
+      { id: 2, name: "Axe", imageUrl: "https://cdn.example/axe.png" },
+    ],
+  };
+  const manifest = {
+    schemaVersion: 1,
+    catalogPatch: "7.41",
+    entries: [{
+      heroId: 1,
+      filename: "1.png",
+      source: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/antimage.png",
+    }],
+  };
+
+  const local = withBundledHeroPortraits(catalog, manifest, "../../assets/hero-portraits");
+
+  assert.equal(local.heroes[0].imageUrl, "../../assets/hero-portraits/1.png");
+  assert.equal(local.heroes[1].imageUrl, "https://cdn.example/axe.png");
+  assert.equal(catalog.heroes[0].imageUrl, "https://cdn.example/antimage.png");
 });

@@ -29,13 +29,14 @@ import { createPlanStore } from "../assistant/plan-store.js";
 import { createScreenClockReader } from "../assistant/screen-clock-reader.js";
 import { createDraftScreenReader } from "../assistant/draft-screen-reader.js";
 import { createTrainingCaptureRecorder } from "../assistant/training-capture-recorder.js";
+import { isTrainingCaptureEnabled } from "../assistant/training-capture-policy.js";
 import { createDraftRoleReader } from "../assistant/draft-role-recognition.js";
 import { analyzeDraft } from "../assistant/draft-analysis.js";
 import { draftTeams, positionCandidateIds } from "../assistant/draft-perspective.js";
 import { adjustDraftCalibration, createDraftGrid, draftCellRects, draftTopSlotRects, normalizeDraftCalibration } from "../assistant/draft-layout.js";
 import { createDraftProfileStore } from "../assistant/draft-profile-store.js";
 import { BUILTIN_DRAFT_CATEGORIES, normalizeDraftSelection } from "../assistant/draft-recommendation.js";
-import { createHeroReferenceLibrary } from "../assistant/hero-reference-library.js";
+import { createHeroReferenceLibrary, withBundledHeroPortraits } from "../assistant/hero-reference-library.js";
 import { normalizeExpertSynergyLibrary } from "../assistant/expert-synergy-library.js";
 import { normalizeExpertCounterLibrary } from "../assistant/expert-counter-library.js";
 import { createDesktopConfig } from "./desktop-config.js";
@@ -51,7 +52,11 @@ const packageMetadata = JSON.parse(readFileSync(path.join(app.getAppPath(), "pac
 const appVariant = resolveAppVariant(packageMetadata.appVariant);
 
 function createDesktopCatalog() {
-  const catalog = createAssistantCatalog();
+  const catalog = withBundledHeroPortraits(
+    createAssistantCatalog(),
+    loadHeroPortraitManifest(),
+    "../../assets/hero-portraits",
+  );
   const file = path.join(assetsDirectory, "data", "opendota-pro-matchups.json");
   try {
     const itemFile = path.join(assetsDirectory, "data", "opendota-pro-items.json");
@@ -69,6 +74,10 @@ function createDesktopCatalog() {
   }
 }
 
+function loadHeroPortraitManifest() {
+  return JSON.parse(readFileSync(path.join(assetsDirectory, "hero-portraits", "manifest.json"), "utf8"));
+}
+
 function createDisabledDesktopStatusServer() {
   return Object.freeze({
     listen: () => Promise.resolve(),
@@ -78,7 +87,7 @@ function createDisabledDesktopStatusServer() {
 
 async function loadHeroReferenceLibrary() {
   const portraitDirectory = path.join(assetsDirectory, "hero-portraits");
-  const manifest = JSON.parse(readFileSync(path.join(portraitDirectory, "manifest.json"), "utf8"));
+  const manifest = loadHeroPortraitManifest();
   return createHeroReferenceLibrary({
     directory: portraitDirectory,
     manifest,
@@ -258,7 +267,8 @@ async function openDraftOverlay(sourceId) {
     closeDraftOverlay();
   }
   const display = await draftDisplay(sourceId);
-  const trainingCapture = await trainingCaptureRecorder.start(sourceId);
+  const trainingCapture = (await trainingCaptureRecorder?.start(sourceId))
+    ?? Object.freeze({ running: false });
   draftOverlayWindow = new BrowserWindow({
     ...display.bounds,
     show: false,
@@ -456,11 +466,13 @@ if (!app.requestSingleInstanceLock()) {
         cachePath: path.join(app.getPath("userData"), "ocr-cache"),
       });
       dotaWindowLocator = createDotaWindowLocator();
-      trainingCaptureRecorder = createTrainingCaptureRecorder({
-        directory: path.join(app.getPath("userData"), "visual-training-captures"),
-        getSources: desktopCapturer.getSources,
-        locate: (sources) => dotaWindowLocator.locate(sources),
-      });
+      if (isTrainingCaptureEnabled(process.env)) {
+        trainingCaptureRecorder = createTrainingCaptureRecorder({
+          directory: path.join(app.getPath("userData"), "visual-training-captures"),
+          getSources: desktopCapturer.getSources,
+          locate: (sources) => dotaWindowLocator.locate(sources),
+        });
+      }
       const heroReferenceLibrary = await loadHeroReferenceLibrary();
       draftRoleReader = createDraftRoleReader({
         cachePath: path.join(app.getPath("userData"), "ocr-cache", "draft-role"),

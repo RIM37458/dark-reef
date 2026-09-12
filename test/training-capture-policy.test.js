@@ -4,7 +4,15 @@ import assert from "node:assert/strict";
 import {
   assertVerifiedDotaSource,
   captureDirectoriesToRemove,
+  isTrainingCaptureEnabled,
 } from "../src/assistant/training-capture-policy.js";
+
+test("packaged training capture stays disabled unless a developer explicitly opts in", () => {
+  assert.equal(isTrainingCaptureEnabled({}), false);
+  assert.equal(isTrainingCaptureEnabled({ DARK_REEF_TRAINING_CAPTURE: "0" }), false);
+  assert.equal(isTrainingCaptureEnabled({ DARK_REEF_TRAINING_CAPTURE: "true" }), false);
+  assert.equal(isTrainingCaptureEnabled({ DARK_REEF_TRAINING_CAPTURE: "1" }), true);
+});
 
 test("training capture accepts only the source bound to the visible dota2.exe window", () => {
   assert.equal(assertVerifiedDotaSource("window:421:0", {

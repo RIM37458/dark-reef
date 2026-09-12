@@ -18,6 +18,7 @@ export function createDraftScreenReader({ getSources, heroReferences = [], confi
   let baseline;
   let layout = Object.freeze({ status: "unknown", recognizedCount: 0, candidateCount: 0, coverage: 0, cells: Object.freeze([]) });
   let tracker = createDraftObservationTracker({ confirmationFrames });
+  let confirmedPosition;
 
   async function capture(sourceId) {
     if (typeof sourceId !== "string" || !sourceId) throw new RangeError("请选择 Dota 2 画面");
@@ -68,7 +69,7 @@ export function createDraftScreenReader({ getSources, heroReferences = [], confi
         return Object.freeze({ index, ...classifyVisualRect(current, rect, heroReferences) });
       });
       const local = findLocalPlayerSlot(current, slotRects.filter(({ width, height }) => width > 0 && height > 0));
-      const detectedPosition = assignedPosition ?? (local && roleReader
+      const detectedPosition = assignedPosition ?? confirmedPosition ?? (local && roleReader
         ? await roleReader.read(captured.thumbnail, slotRects.find(({ index }) => index === local.index))
         : undefined);
       const observation = tracker.update({
@@ -79,12 +80,16 @@ export function createDraftScreenReader({ getSources, heroReferences = [], confi
         localSlotIndex: local?.index,
         assignedPosition: detectedPosition,
       });
+      if (observation.assignedPosition?.certainty === "confirmed") {
+        confirmedPosition = observation.assignedPosition;
+      }
       return Object.freeze({ ...observation, layout });
     },
     clear() {
       baseline = undefined;
       layout = Object.freeze({ status: "unknown", recognizedCount: 0, candidateCount: 0, coverage: 0, cells: Object.freeze([]) });
       tracker = createDraftObservationTracker({ confirmationFrames });
+      confirmedPosition = undefined;
     },
   });
 }

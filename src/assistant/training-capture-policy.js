@@ -2,6 +2,10 @@ export const TRAINING_CAPTURE_INTERVAL_MS = 250;
 export const TRAINING_CAPTURE_MAXIMUM_BYTES = 768 * 1024 * 1024;
 export const TRAINING_CAPTURE_FRAME_SIZE = Object.freeze({ width: 960, height: 540 });
 
+export function isTrainingCaptureEnabled(environment = process.env) {
+  return environment?.DARK_REEF_TRAINING_CAPTURE === "1";
+}
+
 export function assertVerifiedDotaSource(sourceId, binding) {
   if (binding?.status !== "bound" || binding.sourceId !== sourceId || !String(sourceId).startsWith("window:")) {
     throw new RangeError("视觉训练只允许捕获已验证的 Dota 2 窗口");

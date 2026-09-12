@@ -80,14 +80,18 @@ test("draft observer combines ten-slot recognition, local side, and changed grid
     { heroId: 1, signature: visualSignature(frame, slotRects[0]) },
     { heroId: 2, signature: visualSignature(frame, slotRects[1]) },
   ];
+  let roleReads = 0;
   const reader = createDraftScreenReader({
     getSources: async () => [{ id: "window:dota", thumbnail: sourceThumbnail }],
     heroReferences: references,
     confirmationFrames: 2,
     roleReader: {
-      read: async (_thumbnail, rect) => rect.index === 1
-        ? { value: 2, confidence: 0.91, source: "ranked-roles-marker" }
-        : undefined,
+      read: async (_thumbnail, rect) => {
+        roleReads += 1;
+        return rect.index === 1
+          ? { value: 2, confidence: 0.91, source: "ranked-roles-marker" }
+          : undefined;
+      },
     },
   });
   const options = { cells: [], slotRects, phase: "strategy", mode: "ranked-roles" };
@@ -99,6 +103,8 @@ test("draft observer combines ten-slot recognition, local side, and changed grid
   assert.equal(observed.localSide, "radiant");
   assert.equal(observed.assignedPosition.value, 2);
   assert.equal(observed.assignedPosition.certainty, "confirmed");
+  await reader.observe("window:dota", options);
+  assert.equal(roleReads, 2);
 });
 
 test("draft observer attributes grid changes to the learned custom order", async () => {

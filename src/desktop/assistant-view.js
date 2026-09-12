@@ -9,6 +9,7 @@ import { assignedRoleLabel, draftTeams, positionCandidateIds } from "../assistan
 import { presentCaptureSources } from "./capture-source-selection.js";
 
 const SLOT_COUNT = 5;
+const CLOCK_SYNC_INTERVAL_MS = 15_000;
 
 function option(value, label) {
   const element = document.createElement("option");
@@ -320,7 +321,7 @@ export function createAssistantView({ api, onBack, now = () => performance.now()
     previousOcr = undefined;
     if (!captureSource.value) return;
     void syncClockAutomatically();
-    clockTimer = setInterval(syncClockAutomatically, 5_000);
+    clockTimer = setInterval(syncClockAutomatically, CLOCK_SYNC_INTERVAL_MS);
   }
 
   document.querySelector("#capture-refresh").addEventListener("click", loadCaptureSources);

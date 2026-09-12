@@ -36,6 +36,7 @@ test("tactical workbench follows process, position, overlay order and calibrates
   assert.doesNotMatch(html, /class="plan-editor"/);
   assert.match(assistant, /api\.readClock/);
   assert.match(assistant, /api\.openDraftOverlay/);
+  assert.match(assistant, /const CLOCK_SYNC_INTERVAL_MS = 15_000/);
 });
 
 test("deep sea armory exposes plans, hero pools, and personal matchups", () => {
@@ -57,4 +58,9 @@ test("every formal feature page has one persistent header route back home", () =
 test("desktop build does not advertise or start the headless status service", () => {
   assert.doesNotMatch(html, /127\.0\.0\.1|\/status/);
   assert.match(main, /serverFactory: createDisabledDesktopStatusServer/);
+});
+
+test("desktop build keeps high-frequency training capture behind an explicit opt-in", () => {
+  assert.match(main, /isTrainingCaptureEnabled\(process\.env\)/);
+  assert.match(main, /trainingCaptureRecorder\?\.start\(sourceId\)/);
 });
