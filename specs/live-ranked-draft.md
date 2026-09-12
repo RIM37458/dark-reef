@@ -43,3 +43,17 @@ Turn the formal tactical workbench into the single live draft entry. It reads on
 - Grid changes and ten-slot picks are emitted in one observation.
 - A collapsed grid does not erase the last stable lineup.
 - Confirmed and inferred positions remain distinguishable end to end.
+
+## Custom hero-grid order
+
+- Hero identity is learned from the pixels inside each calibrated portrait rectangle; the default four-attribute manifest supplies geometry only and never supplies the observed hero id.
+- A learned layout may contain repeated hero ids because custom categories can place one hero more than once.
+- Grid phase and unavailable-state inference use only a confidence-qualified learned layout.
+- If too few portrait rectangles can be identified, layout status is `unsupported`: top-bar lineup recognition continues, grid-derived unavailable heroes stay empty, and the overlay presents recommendations as text instead of drawing them over unverified positions.
+- Changing the custom layout or using geometry outside the calibrated rectangles must never silently fall back to the default hero order.
+
+### Custom-order acceptance tests
+
+- Swapping heroes between calibrated rectangles produces the swapped runtime mapping without editing the bundled manifest.
+- A changed rectangle is attributed to the hero learned at that rectangle, not to the default hero assigned there.
+- Insufficient visual matches produce `unsupported` and no grid-derived unavailable heroes while ten-slot recognition remains available.

@@ -70,6 +70,33 @@ export function classifyVisualRect(frame, rect, references, { maximumDistance = 
   return Object.freeze({ status: "recognized", heroId: best.heroId, confidence: Number((1 - best.distance / maximumDistance).toFixed(3)) });
 }
 
+export function learnDraftLayout(frame, candidates, references, {
+  maximumDistance = 0.18,
+  minimumMargin = 0.035,
+  minimumRatio = 0.3,
+} = {}) {
+  validateFrame(frame);
+  if (!Array.isArray(candidates) || !Array.isArray(references)) throw new TypeError("选人布局学习输入无效");
+  if (!Number.isFinite(minimumRatio) || minimumRatio <= 0 || minimumRatio > 1) throw new RangeError("选人布局覆盖率无效");
+  const cells = candidates.flatMap(({ x, y, width, height }) => {
+    const rect = { x, y, width, height };
+    const match = classifyVisualRect(frame, rect, references, { maximumDistance, minimumMargin });
+    return match.status === "recognized"
+      ? [Object.freeze({ heroId: match.heroId, ...rect, confidence: match.confidence })]
+      : [];
+  });
+  const candidateCount = candidates.length;
+  const coverage = candidateCount ? Number((cells.length / candidateCount).toFixed(3)) : 0;
+  const status = candidateCount > 0 && coverage >= minimumRatio ? "learned" : "unsupported";
+  return Object.freeze({
+    status,
+    recognizedCount: cells.length,
+    candidateCount,
+    coverage,
+    cells: status === "learned" ? Object.freeze(cells) : Object.freeze([]),
+  });
+}
+
 export function detectDraftGridPhase(frame, cells, references, { maximumDistance = 0.3, minimumRatio = 0.3 } = {}) {
   const byHeroId = new Map(references.map((reference) => [reference.heroId, reference.signature]));
   const comparable = cells.filter((cell) => byHeroId.has(cell.heroId));

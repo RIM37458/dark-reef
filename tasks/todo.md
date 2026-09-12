@@ -124,3 +124,11 @@
 - [x] Expand reviewed hero effect and dependency profiles from bundled 7.41 facts.
 - [x] Add role-filtered item responses for passive defence, mana, illusions, buffs, attacks, and evasion.
 - [x] Pass focused tests and the full handoff gate, then review the final diff.
+
+## Custom hero-grid order increment
+
+- [ ] Prove that calibrated rectangles learn their current hero identities instead of using default manifest ids.
+- [ ] Attribute visual changes to the learned hero and preserve repeated custom-category placements.
+- [ ] Keep top-bar recognition active while unsupported grid geometry yields no unavailable-hero claims.
+- [ ] Render learned positions only; show named recommendations when positional overlay is unsupported.
+- [ ] Pass focused tests, the full project gate, and five-axis review.

@@ -1,10 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { classifyVisualRect, compareDraftCells, detectDraftGridPhase, findLocalPlayerSlot, visualSignature } from "../src/assistant/draft-vision.js";
+import { classifyVisualRect, compareDraftCells, detectDraftGridPhase, findLocalPlayerSlot, learnDraftLayout, visualSignature } from "../src/assistant/draft-vision.js";
 
 function solid(width, height, blue, green, red) {
   return { width, height, data: Buffer.from(Array.from({ length: width * height }, () => [blue, green, red, 255]).flat()) };
+}
+
+function split(left, right) {
+  const frame = solid(16, 4, ...left);
+  for (let y = 0; y < frame.height; y += 1) {
+    for (let x = frame.width / 2; x < frame.width; x += 1) {
+      const offset = (y * frame.width + x) * 4;
+      frame.data.set([...right, 255], offset);
+    }
+  }
+  return frame;
 }
 
 test("draft vision reports only cells whose appearance changed substantially", () => {
@@ -59,6 +70,47 @@ test("portrait classification requires a unique close reference", () => {
     maximumDistance: 0.01,
     minimumMargin: 0.1,
   }).status, "uncertain");
+});
+
+test("draft layout learns the hero currently visible in each calibrated rectangle", () => {
+  const left = [20, 30, 40];
+  const right = [180, 190, 200];
+  const frame = split(left, right);
+  const cells = [
+    { heroId: 1, x: 0, y: 0, width: 0.5, height: 1 },
+    { heroId: 2, x: 0.5, y: 0, width: 0.5, height: 1 },
+  ];
+  const references = [
+    { heroId: 1, signature: visualSignature(solid(8, 4, ...right), { x: 0, y: 0, width: 1, height: 1 }) },
+    { heroId: 2, signature: visualSignature(solid(8, 4, ...left), { x: 0, y: 0, width: 1, height: 1 }) },
+  ];
+
+  assert.deepEqual(learnDraftLayout(frame, cells, references, { minimumRatio: 1 }), {
+    status: "learned",
+    recognizedCount: 2,
+    candidateCount: 2,
+    coverage: 1,
+    cells: [
+      { heroId: 2, x: 0, y: 0, width: 0.5, height: 1, confidence: 1 },
+      { heroId: 1, x: 0.5, y: 0, width: 0.5, height: 1, confidence: 1 },
+    ],
+  });
+});
+
+test("draft layout stays unsupported when calibrated rectangles cannot be identified", () => {
+  const rect = { heroId: 1, x: 0, y: 0, width: 1, height: 1 };
+  const references = [{ heroId: 1, signature: visualSignature(solid(8, 4, 240, 240, 240), rect) }];
+
+  assert.deepEqual(learnDraftLayout(solid(8, 4, 10, 10, 10), [rect], references, {
+    maximumDistance: 0.05,
+    minimumRatio: 1,
+  }), {
+    status: "unsupported",
+    recognizedCount: 0,
+    candidateCount: 1,
+    coverage: 0,
+    cells: [],
+  });
 });
 
 test("local slot detection requires a unique gold border", () => {

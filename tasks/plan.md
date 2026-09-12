@@ -120,3 +120,20 @@ Current 7.41 ability/item text → conservative semantic profiles → cross-fami
 - Add only reusable effect/trait relations with explicit present-patch evidence.
 - Cover restoration, passive defence, mana, mobility, illusions, dispels, attacks, and evasion.
 - Keep unreviewed heroes unknown and keep draft pick/ban causality outside the mechanism layer.
+
+## Custom hero-grid order increment
+
+Calibrated portrait rectangles + complete portrait references → confidence-qualified runtime hero mapping → layout-aware grid changes → learned-position overlay or explicit text fallback.
+
+- Treat the default 7.41 manifest as a geometry seed only; classify the hero visible in every rectangle before assigning identity.
+- Preserve repeated hero placements from custom categories and aggregate unavailable state by hero id.
+- Keep top-bar picks authoritative and independent from grid-layout support.
+- Fail visibly when the calibrated geometry cannot identify enough portraits; do not draw recommendations on assumed positions.
+
+### Risks and mitigations
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Custom categories also change portrait geometry | High | Publish `unsupported`, retain top-bar recognition, and show text recommendations instead of false positional highlights |
+| Similar or animated portraits create duplicate matches | Medium | Require bounded distance and runner-up margin for every learned rectangle |
+| A hero appears in more than one custom category | Medium | Preserve all qualified rectangles and deduplicate only hero-level unavailable output |
