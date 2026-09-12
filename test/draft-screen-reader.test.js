@@ -148,3 +148,66 @@ test("draft observer attributes grid changes to the learned custom order", async
   const second = await reader.observe("window:dota", { cells, slotRects, mode: "ranked-roles" });
   assert.deepEqual(second.bannedHeroIds, [2]);
 });
+
+test("draft scan preserves repeated custom placements but reports one unavailable hero", async () => {
+  let frame = thumbnail(100);
+  const cells = [
+    { heroId: 1, x: 0, y: 0, width: 0.5, height: 1 },
+    { heroId: 2, x: 0.5, y: 0, width: 0.5, height: 1 },
+  ];
+  const reader = createDraftScreenReader({
+    getSources: async () => [{ id: "window:dota", thumbnail: frame }],
+    heroReferences: [{
+      heroId: 7,
+      signature: visualSignature({ width: 2, height: 1, data: frame.getBitmap() }, { x: 0, y: 0, width: 1, height: 1 }),
+    }],
+  });
+
+  const calibrated = await reader.calibrate("window:dota", cells);
+  assert.equal(calibrated.recognizedCount, 2);
+  frame = thumbnail(10);
+  const scanned = await reader.scan("window:dota", cells);
+  assert.deepEqual(scanned.unavailableHeroIds, [7]);
+  assert.equal(scanned.changes.length, 2);
+});
+
+test("unsupported grid geometry does not disable top-bar hero recognition", async () => {
+  const width = 16;
+  const height = 4;
+  const pixels = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const value = x < width / 2 ? 10 : 200;
+      pixels.set([value, value, value, 255], (y * width + x) * 4);
+    }
+  }
+  const reader = createDraftScreenReader({
+    getSources: async () => [{
+      id: "window:dota",
+      thumbnail: {
+        isEmpty: () => false,
+        getSize: () => ({ width, height }),
+        getBitmap: () => pixels,
+      },
+    }],
+    heroReferences: [{
+      heroId: 9,
+      signature: visualSignature({ width: 8, height, data: Buffer.from(Array.from({ length: 8 * height }, () => [200, 200, 200, 255]).flat()) }, { x: 0, y: 0, width: 1, height: 1 }),
+    }],
+    confirmationFrames: 1,
+  });
+  const cells = [{ heroId: 9, x: 0, y: 0, width: 0.5, height: 1 }];
+  const slotRects = Array.from({ length: 10 }, (_, index) => ({
+    index,
+    x: index === 0 ? 0.5 : 0,
+    y: 0,
+    width: index === 0 ? 0.5 : 0,
+    height: index === 0 ? 1 : 0,
+  }));
+
+  const observed = await reader.observe("window:dota", { cells, slotRects, mode: "ranked-roles" });
+  assert.equal(observed.layout.status, "unsupported");
+  assert.equal(observed.phase, "unknown");
+  assert.equal(observed.slots[0].heroId, 9);
+  assert.deepEqual(observed.bannedHeroIds, []);
+});

@@ -1,36 +1,32 @@
-import { createDraftGrid } from "../assistant/draft-layout.js";
 import { draftTopSlotRects } from "../assistant/draft-layout.js";
 import { recommendDraftHeroes } from "../assistant/draft-recommendation.js";
 
 const board = document.querySelector("#draft-board");
 const combatCooldowns = document.querySelector("#combat-cooldowns");
 const catalog = await window.draftOverlay.getCatalog();
-const groups = createDraftGrid(catalog.heroes);
 const topSlots = draftTopSlotRects();
+let layoutKey = "";
 
-function heroCell(heroId) {
+function heroCell({ heroId, x, y, width, height, confidence }) {
   const cell = document.createElement("div");
   cell.className = "draft-hero";
   cell.dataset.heroId = String(heroId);
+  cell.dataset.confidence = String(confidence);
+  cell.style.setProperty("--cell-x", `${x * 100}vw`);
+  cell.style.setProperty("--cell-y", `${y * 100}vh`);
+  cell.style.setProperty("--cell-width", `${width * 100}vw`);
+  cell.style.setProperty("--cell-height", `${height * 100}vh`);
   return cell;
 }
 
-for (const group of groups) {
-  const section = document.createElement("section");
-  section.className = `draft-group attribute-${group.id}`;
-  const title = document.createElement("h2");
-  title.textContent = group.name;
-  const grid = document.createElement("div");
-  grid.className = "draft-grid";
-  grid.style.setProperty("--columns", group.columns);
-  grid.append(...group.cells.map(({ heroId, row, column }) => {
-    const cell = heroCell(heroId);
-    cell.dataset.row = String(row);
-    cell.dataset.column = String(column);
-    return cell;
-  }));
-  section.append(title, grid);
-  board.append(section);
+function renderLayout(layout) {
+  const cells = layout?.status === "learned" ? layout.cells : [];
+  const nextKey = cells.map(({ heroId, x, y, width, height }) => `${heroId}:${x}:${y}:${width}:${height}`).join("|");
+  if (nextKey !== layoutKey) {
+    board.replaceChildren(...cells.map(heroCell));
+    layoutKey = nextKey;
+  }
+  return cells.length > 0;
 }
 
 function render(state) {
@@ -45,11 +41,8 @@ function render(state) {
   const unavailable = new Set(state.unavailableHeroIds);
   const filtering = Boolean(state.recommendedHeroIds?.length || state.selectedCategoryIds.length);
   const gamePhase = state.observation?.phase === "strategy";
-  board.hidden = gamePhase;
-  board.style.setProperty("--board-x", `${state.calibration.x * 100}vw`);
-  board.style.setProperty("--board-y", `${state.calibration.y * 100}vh`);
-  board.style.setProperty("--board-width", `${state.calibration.width * 100}vw`);
-  board.style.setProperty("--board-height", `${state.calibration.height * 100}vh`);
+  const hasLearnedLayout = renderLayout(state.observation?.layout);
+  board.hidden = gamePhase || !hasLearnedLayout;
   board.style.setProperty("--board-opacity", state.calibration.opacity);
   for (const cell of board.querySelectorAll(".draft-hero")) {
     const heroId = Number(cell.dataset.heroId);

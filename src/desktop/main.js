@@ -523,7 +523,9 @@ if (!app.requestSingleInstanceLock()) {
           unavailableHeroIds: observation.bannedHeroIds,
           recommendedHeroIds: Object.freeze(recommendedHeroIds),
           observation,
-          message: observation.localSide === "unknown"
+          message: observation.layout.status !== "learned"
+            ? "当前英雄网格布局未通过校验；已保留顶部阵容识别，推荐会显示在控制条。"
+            : observation.localSide === "unknown"
             ? "已读取阵容；尚未可靠定位本机玩家槽位。"
             : `已定位${observation.localSide === "radiant" ? "天辉" : "夜魇"}本机槽位。`,
         });
@@ -540,7 +542,9 @@ if (!app.requestSingleInstanceLock()) {
       }));
       handleTrustedIpc("draft:calibrate", async () => {
         const result = await draftScreenReader.calibrate(draftState.sourceId, draftCells());
-        publishDraft({ message: `已封存 ${result.cellCount} 枚英雄格的空白阵列。` });
+        publishDraft({ message: result.layoutStatus === "learned"
+          ? `已学习 ${result.recognizedCount} 枚英雄格的当前顺序。`
+          : "当前英雄网格布局未通过校验；不会按默认顺序推断。" });
         return result;
       });
       handleTrustedIpc("draft:scan", async () => {

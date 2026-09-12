@@ -9,6 +9,9 @@ main { padding: 0.65rem; }
 .overlay-reading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2.5rem; padding: .45rem .6rem; border: 1px solid #2c4844; background: #071214; }
 .overlay-reading strong { color: #d8d2ba; font-size: .82rem; }
 .overlay-reading span { color: #8bb5ab; font-size: .72rem; }
+.recommendations { display: flex; gap: .3rem; margin-top: .45rem; overflow: hidden; }
+.recommendations[hidden] { display: none; }
+.recommendations span { flex: 0 1 auto; overflow: hidden; padding: .2rem .35rem; border: 1px solid #31534d; color: #b8ddd3; background: #0b1d1d; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
 .categories, .controls { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 button { min-height: 1.75rem; padding: 0.25rem 0.58rem; border: 1px solid #38534f; border-radius: 2px; color: #9faaa5; background: #0a1719; cursor: pointer; }
 button:hover, button:focus-visible { border-color: #7fb7aa; color: #d8e0db; outline: none; }

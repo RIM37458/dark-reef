@@ -127,8 +127,8 @@
 
 ## Custom hero-grid order increment
 
-- [ ] Prove that calibrated rectangles learn their current hero identities instead of using default manifest ids.
-- [ ] Attribute visual changes to the learned hero and preserve repeated custom-category placements.
-- [ ] Keep top-bar recognition active while unsupported grid geometry yields no unavailable-hero claims.
-- [ ] Render learned positions only; show named recommendations when positional overlay is unsupported.
-- [ ] Pass focused tests, the full project gate, and five-axis review.
+- [x] Prove that calibrated rectangles learn their current hero identities instead of using default manifest ids.
+- [x] Attribute visual changes to the learned hero and preserve repeated custom-category placements.
+- [x] Keep top-bar recognition active while unsupported grid geometry yields no unavailable-hero claims.
+- [x] Render learned positions only; show named recommendations when positional overlay is unsupported.
+- [x] Pass focused tests, the full project gate, and five-axis review.
